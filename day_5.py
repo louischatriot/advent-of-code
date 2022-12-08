@@ -13,7 +13,11 @@ Should parse it cleanly but it's a pain :)
  1   2   3   4   5   6   7   8   9
  """
 
-stacks = [
+with open("inputs/day_5.data") as file:
+    lines = [line.rstrip() for line in file]
+
+
+stacks_1 = [
     [],   # Unused stack 0
     ['T', 'D', 'W', 'Z', 'V', 'P'],
     ['L', 'S', 'W', 'V', 'F', 'J', 'D'],
@@ -26,12 +30,19 @@ stacks = [
     ['H', 'G', 'Z', 'R', 'C']
 ]
 
+stacks_2 = [
+    [],   # Unused stack 0
+    ['T', 'D', 'W', 'Z', 'V', 'P'],
+    ['L', 'S', 'W', 'V', 'F', 'J', 'D'],
+    ['Z', 'M', 'L', 'S', 'V', 'T', 'B', 'H'],
+    ['R', 'S', 'J'],
+    ['C', 'Z', 'B', 'G', 'F', 'M', 'L', 'W'],
+    ['Q', 'W', 'V', 'H', 'Z', 'R', 'G', 'B'],
+    ['V', 'J', 'P', 'C', 'B', 'D', 'N'],
+    ['P', 'T', 'B', 'Q'],
+    ['H', 'G', 'Z', 'R', 'C']
+]
 
-with open("inputs/day_5.data") as file:
-    lines = [line.rstrip() for line in file]
-
-
-parsed = []
 for line in lines:
     line = line[5:]
     if '0' <= line[1] <= '9':   # Always one or two digits
@@ -44,11 +55,25 @@ for line in lines:
     sf = int(line[0])
     st = int(line[-1])
 
-
+    # Part 1
     for i in range(0, n):
-        stacks[st].append(stacks[sf].pop())
+        stacks_1[st].append(stacks_1[sf].pop())
 
-for s in stacks:
+    # Part 2
+    cut = len(stacks_2[sf]) - n
+    stacks_2[st] += stacks_2[sf][cut:]
+    stacks_2[sf] = stacks_2[sf][0:cut]
+
+
+# Part 1
+for s in stacks_1:
+    print(s)
+
+print("======================================")
+print("======================================")
+
+# Part 2
+for s in stacks_2:
     print(s)
 
 
