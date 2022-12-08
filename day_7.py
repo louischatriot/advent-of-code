@@ -97,7 +97,22 @@ while len(to_check) > 0:
     for dd in d.dirs:
         to_check.append(dd)
 
-
 print(res)
 
 
+# Part 2
+used = root.size
+total = 70000000
+needed = 30000000
+to_free = needed - (total - used)
+
+res = root.size
+to_check = [root]
+while len(to_check) > 0:
+    d = to_check.pop()
+    if d.size >= to_free:
+        res = min(res, d.size)
+    for dd in d.dirs:
+        to_check.append(dd)
+
+print(res)
