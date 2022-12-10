@@ -16,3 +16,21 @@ for i in [20, 60, 100, 140, 180, 220]:
     res += i * series[i - 1]
 
 print(res)
+
+
+# Part 2
+
+screen = ['', '', '', '', '', '']
+
+for i in range(1, len(series)):
+    l = (i - 1) // 40
+    p = (i - 1) - 40 * l
+
+    if series[i - 1] - 1 <= p <= series[i - 1] + 1:
+        screen[l] += '#'
+    else:
+        screen[l] += '.'
+
+screen = '\n'.join(screen)
+print(screen)
+
