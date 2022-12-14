@@ -27,7 +27,7 @@ N = len(left)
 def compare(l, r):
     if len(l) == 0 and len(r) > 0:
         return 1
-    
+
     if len(l) > 0 and len(r) == 0:
         return -1
 
