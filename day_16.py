@@ -194,6 +194,9 @@ def search_two(opened, targeth, targete, ttth, ttte, remaining_time):
                             res = o
 
 
+    # Do we need a case where one worker simply waits because another worker is better positioned?
+    # Not treating for now
+
 
     return res, score
 
