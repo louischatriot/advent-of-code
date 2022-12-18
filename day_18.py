@@ -53,6 +53,7 @@ checked = set()
 while len(fringe) > 0:
     cube = fringe.pop(0)
 
+    # Not sure why this check is needed given the one on line 70 but oh well we will see later
     if cube in checked:
         continue
 
