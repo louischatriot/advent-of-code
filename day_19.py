@@ -29,7 +29,22 @@ for line in lines:
 
         robots_costs[kind] = costs
 
-    blueprints[blueprint_n] = robots_costs
+    blueprints[blueprint_n] = dict()
+    blueprints[blueprint_n]['bp'] = robots_costs
+    blueprints[blueprint_n]['max_useful'] = dict()
+    for robot in blueprints[blueprint_n]['bp']:
+        print(blueprints[blueprint_n]['bp'][robot])
+
+
+
+        blueprints[blueprint_n]['max_useful'][robot] = max([blueprints[blueprint_n]['bp'][rr].get(robot, 0) for rr in blueprints[blueprint_n]['bp'].keys()])
+
+
+print(blueprints)
+
+1/0
+
+
 
 
 def can_build(blueprint, resources, robot):
@@ -72,11 +87,8 @@ def dfs(blueprint, resources, robots, remaining_time):
 
 
     # That should not work, actually, as we can construct more geode robots
-    if remaining_time + resources['geode'] <= 11:
-        # if resources['geode'] >= 1:
-            # print(remaining_time, resources['geode'])
-
-        return resources, robots
+    # if remaining_time + resources['geode'] <= 9:
+        # return resources, robots
 
     t = time_until_next_robot(blueprint, resources, robots)
     t = min(t, remaining_time)
@@ -89,7 +101,6 @@ def dfs(blueprint, resources, robots, remaining_time):
 
     if remaining_time - t == 0:
         return resources, robots
-
 
     # Not building anything
     _resources = {k:v for k,v in resources.items()}
@@ -107,6 +118,7 @@ def dfs(blueprint, resources, robots, remaining_time):
 
     # Building one robot (not handling case where multiple robots are built at once, not sure it's possible from the docs)
     for robot in blueprint:
+        # CHECK FOR MAX USEFUL HERE
         if can_build(blueprint, resources, robot):
             _resources = {k:v for k,v in resources.items()}
             _robots = {k:v for k,v in robots.items()}
