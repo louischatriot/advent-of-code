@@ -90,6 +90,16 @@ def dfs_simple(blueprint, resources, robots, remaining_time):
     if remaining_time == 1:
         return resources['geode'] + robots['geode']
 
+    # OPTIMIZATION POSSIBLE
+    # p = resources['geode']
+    # r = robots['geode']
+    # for _ in range(remaining_time, 0, -1):
+        # p += r
+        # r += 1
+
+    # if p < 45:
+        # return 0
+
     # Case = not building anything anymore
     score = resources['geode'] + remaining_time * robots['geode']
 
