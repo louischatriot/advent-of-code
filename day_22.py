@@ -11,7 +11,7 @@ class Node():
         self.neighbours = dict()
 
     def __str__(self):
-        return f"<{self.type}> {self.x},{self.y}"
+        return f"<{self.type}> {self.x + 1},{self.y + 1}"
 
     def set_type(self, t):
         self.type = t
@@ -23,40 +23,38 @@ class Node():
         return self.neighbours[direction]
 
 
+_path = lines[-1]
+path = []
+num = ''
+for c in _path:
+    if c in ['L', 'R']:
+        path.append(int(num))
+        path.append(c)
+        num = ''
+    else:
+        num += c
+path.append(int(num))
 
-_path = None
+lines = lines[0:-2]
+
+
 start = None
-matrix = []
-max_y = -1
+N = len(lines)
+M = max([len(l) for l in lines])
+matrix = [[None for _ in range(0, M)] for _ in range(0, N)]
+
 
 for x, l in enumerate(lines):
-    if l == '':
-        continue
-
-    if l[0] not in [' ', '.', '#']:
-        _path = l
-        continue
-
-    line_start = None
     line_nodes = []
 
-    full_line_nodes = []
-
     for y, c in enumerate(l):
-        full_line_nodes.append(None)
-        max_y = max(max_y, y)
-
         if c == ' ':
             continue
 
-        if line_start is None:
-            line_start = y + 1
-
-        # Leave an empty line at the top of the input file :)
-        n = Node(x, y+1)
+        n = Node(x, y)
         n.set_type('wall' if c == '#' else 'empty')
         line_nodes.append(n)
-        full_line_nodes[-1] = n
+        matrix[x][y] = n
 
         if start is None:
             start = n
@@ -68,16 +66,11 @@ for x, l in enumerate(lines):
         n1.set_neighbour('right', n2)
         n2.set_neighbour('left', n1)
 
-    matrix.append(full_line_nodes)
-
-
-for y in range(0, max_y+1):
+for y in range(0, M):
     xs, xe = None, None
 
-    for x in range(0, len(matrix)):
-        elt = None if len(matrix[x]) <= y else matrix[x][y]
-
-        if elt is not None:
+    for x in range(0, N):
+        if matrix[x][y] is not None:
             xe = x
             if xs is None:
                 xs = x
@@ -98,18 +91,6 @@ for y in range(0, max_y+1):
 dirs = dict()
 dirs['L'] = { 'left': 'bottom', 'bottom': 'right', 'right': 'top', 'top': 'left' }
 dirs['R'] = { 'left': 'top', 'top': 'right', 'right': 'bottom', 'bottom': 'left' }
-
-
-path = []
-num = ''
-for c in _path:
-    if c in ['L', 'R']:
-        path.append(int(num))
-        path.append(c)
-        num = ''
-    else:
-        num += c
-path.append(int(num))
 
 
 
