@@ -1,6 +1,6 @@
 from time import time
 
-with open("inputs/day_22_example.data") as file:
+with open("inputs/day_22.data") as file:
     lines = [line.rstrip() for line in file]
 
 
@@ -177,13 +177,26 @@ def wrap(matrix, coords_1, coords_2, dir_12, dir_21):
         n1.set_neighdir(dir_12, n2, opposites[dir_21])
         n2.set_neighdir(dir_21, n1, opposites[dir_12])
 
-wrap(matrix, [(x, 8) for x in range(0, 4)], [(4, y) for y in range(4, 8)], 'left', 'top')
-wrap(matrix, [(x, 8) for x in range(8, 12)], [(7, y) for y in range(4, 8)], 'left', 'bottom')
-wrap(matrix, [(0, y) for y in range(8, 12)], [(4, y) for y in range(0, 4)], 'top', 'top')
-wrap(matrix, [(11, y) for y in range(8, 12)], [(7, y) for y in range(3, -1, -1)], 'bottom', 'bottom')
-wrap(matrix, [(11, y) for y in range(12, 16)], [(x, 0) for x in range(7, 3, -1)], 'bottom', 'left')
-wrap(matrix, [(8, y) for y in range(12, 16)], [(x, 11) for x in range(7, 3, -1)], 'top', 'right')
-wrap(matrix, [(x, 15) for x in range(8, 12)], [(x, 11) for x in range(3, -1, -1)], 'right', 'right')
+# Wrapping for the example
+# wrap(matrix, [(x, 8) for x in range(0, 4)], [(4, y) for y in range(4, 8)], 'left', 'top')
+# wrap(matrix, [(x, 8) for x in range(8, 12)], [(7, y) for y in range(4, 8)], 'left', 'bottom')
+# wrap(matrix, [(0, y) for y in range(8, 12)], [(4, y) for y in range(0, 4)], 'top', 'top')
+# wrap(matrix, [(11, y) for y in range(8, 12)], [(7, y) for y in range(3, -1, -1)], 'bottom', 'bottom')
+# wrap(matrix, [(11, y) for y in range(12, 16)], [(x, 0) for x in range(7, 3, -1)], 'bottom', 'left')
+# wrap(matrix, [(8, y) for y in range(12, 16)], [(x, 11) for x in range(7, 3, -1)], 'top', 'right')
+# wrap(matrix, [(x, 15) for x in range(8, 12)], [(x, 11) for x in range(3, -1, -1)], 'right', 'right')
+
+
+# Wrapping for the real input
+wrap(matrix, [(49, y) for y in range(100, 150)], [(x, 99) for x in range(50, 100)], 'bottom', 'right')
+wrap(matrix, [(x, 149) for x in range(49, -1, -1)], [(x, 99) for x in range(100, 150)], 'right', 'right')
+wrap(matrix, [(100, y) for y in range(0, 50)], [(x, 50) for x in range(50, 100)], 'top', 'left')
+wrap(matrix, [(x, 0) for x in range(100, 150)], [(x, 50) for x in range(49, -1, -1)], 'left', 'left')
+wrap(matrix, [(x, 49) for x in range(150, 200)], [(149, y) for y in range(50, 100)], 'right', 'bottom')
+wrap(matrix, [(x, 0) for x in range(150, 200)], [(0, y) for y in range(50, 100)], 'left', 'top')
+wrap(matrix, [(199, y) for y in range(0, 50)], [(0, y) for y in range(100, 150)], 'bottom', 'top')
+
+
 
 
 
