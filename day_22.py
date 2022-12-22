@@ -1,6 +1,6 @@
 from time import time
 
-with open("inputs/day_22_example.data") as file:
+with open("inputs/day_22.data") as file:
     lines = [line.rstrip() for line in file]
 
 
@@ -24,7 +24,7 @@ class Node():
 
 
 
-path = None
+_path = None
 start = None
 matrix = []
 max_y = -1
@@ -34,7 +34,7 @@ for x, l in enumerate(lines):
         continue
 
     if l[0] not in [' ', '.', '#']:
-        path = l
+        _path = l
         continue
 
     line_start = None
@@ -57,6 +57,9 @@ for x, l in enumerate(lines):
         n.set_type('wall' if c == '#' else 'empty')
         line_nodes.append(n)
         full_line_nodes[-1] = n
+
+        if start is None:
+            start = n
 
     # Linking the line
     for i in range(0, len(line_nodes)):
@@ -92,49 +95,41 @@ for y in range(0, max_y+1):
     n2.set_neighbour('top', n1)
 
 
+dirs = dict()
+dirs['L'] = { 'left': 'bottom', 'bottom': 'right', 'right': 'top', 'top': 'left' }
+dirs['R'] = { 'left': 'top', 'top': 'right', 'right': 'bottom', 'bottom': 'left' }
 
 
-# n = matrix[6][2]
-# print(n)
-# n = n.get_neighbour('bottom')
-# print(n)
-
-# n = n.get_neighbour('bottom')
-# print(n)
-
-# n = n.get_neighbour('bottom')
-# print(n)
-
-# n = n.get_neighbour('right')
-# n = n.get_neighbour('right')
-# n = n.get_neighbour('right')
-# n = n.get_neighbour('right')
-# n = n.get_neighbour('right')
-# n = n.get_neighbour('right')
-# print(n)
-
-# n = n.get_neighbour('top')
-# print(n)
-
-# n = n.get_neighbour('top')
-# n = n.get_neighbour('top')
-# print(n)
-
-# n = n.get_neighbour('top')
-# n = n.get_neighbour('top')
-# print(n)
-
-# n = n.get_neighbour('top')
-# print(n)
-
-# n = n.get_neighbour('left')
-# print(n)
-
-# n = n.get_neighbour('bottom')
-# print(n)
+path = []
+num = ''
+for c in _path:
+    if c in ['L', 'R']:
+        path.append(int(num))
+        path.append(c)
+        num = ''
+    else:
+        num += c
+path.append(int(num))
 
 
 
+# Part 1
+current = start
+dir = 'right'
 
+for i in path:
+    if i in ['L', 'R']:
+        dir = dirs[i][dir]
+    else:
+        for _ in range(0, i):
+            next = current.get_neighbour(dir)
+            if next.type == 'empty':
+                current = next
+
+print(current)
+print(dir)
+
+
+# Answer for part 1 is ==> 1000 * 126 + 4 * 87 + 2
 
 
