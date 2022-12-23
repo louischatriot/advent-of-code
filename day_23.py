@@ -3,22 +3,6 @@ from time import time
 with open("inputs/day_23.data") as file:
     lines = [line.rstrip() for line in file]
 
-rounds = 10
-
-# N = len(lines)
-# M = len(lines[0])
-
-# All elves start facing north
-# grid = [['.' for _ in range(0, M + rounds * 2)] for _ in range(0, rounds)]
-# for l in lines:
-    # grid.append(['.' for _ in range(0, rounds)] + ['N' if c == '#' else '.' for c in l] + ['.' for _ in range(0, rounds)])
-# grid += [['.' for _ in range(0, M + rounds * 2)] for _ in range(0, rounds)]
-
-# N = len(grid)
-# M = len(grid[0])
-
-
-
 elves = []
 for x, l in enumerate(lines):
     for y, c in enumerate(l):
@@ -58,10 +42,10 @@ adjacents = [(dx, dy) for dx in [-1, 0, 1] for dy in [-1, 0, 1] if dx != 0 or dy
 
 
 
-# Part 1
+# Part 1 and 2
 dir0_main = 'N'
 
-for _ in range(0, 10):
+for r in range(0, 10000):
     positions = set((x, y) for _, x, y in elves)
     proposals = {}
 
@@ -73,7 +57,7 @@ for _ in range(0, 10):
         if all([(x0 + dx, y0 + dy) not in positions for dx, dy in adjacents]):
             continue
 
-        dir0 = dir0_main   # Overriding because I did not read the text correctly oO
+        dir0 = dir0_main   # Overriding because I did not read the text correctly oO - I thought every elf would remember their last direction
         d0 = dirs.index(dir0)
 
         for d in range(0, len(dirs)):
@@ -89,7 +73,6 @@ for _ in range(0, 10):
                 proposals[(x, y)] = []
             proposals[(x, y)].append((e, d))
 
-
     for p, es in proposals.items():
         if len(es) == 1:
             x, y = p
@@ -98,7 +81,10 @@ for _ in range(0, 10):
             e[1] = x
             e[2] = y
 
-    # print_elves(elves)
+    # Comment this out and run the right number of rounds for part 1
+    if len(proposals) == 0:
+        print(r+1)
+        1/0
 
     dir0_main = dirs[(dirs.index(dir0_main) + 1) % len(dirs)]
 
