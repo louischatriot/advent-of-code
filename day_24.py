@@ -56,55 +56,58 @@ class Node():
         return (self.x, self.y)
 
     def __str__(self):
-        return f"<NODE> {self.x}, {self.y} - round {r}"
+        return f"<NODE> {self.x}, {self.y} - round {self.r}"
 
 
 start_node = Node(start[0], start[1], 0)
 
-next = Node(0, 0, 1)
-start_node.add_next(next, 'v')
+nextouille = Node(0, 0, 1)
+start_node.add_next(nextouille, 'v')
 
-
-last_round = [next]
-
+last_round = [nextouille]
 
 
 # This is incomplete for certain cases where we need to come back to a node that couldn't be reached after one R of blizzards
-for r in range(2, R-1):
+for r in range(2, 3 * R):
     this_round = []
 
+    # print("%%%%%%%%%%%%%%%%%%%%%%%%%%")
+
     for node in last_round:
+        # print(node)
+
+        to_test = []
+
         x, y = node.get_coords()
 
-        if x > 0 and (x-1, y) not in blizzards_pos[r]:
+        if x > 0 and (x-1, y) not in blizzards_pos[r%R]:
             next = Node(x-1, y, r)
             node.add_next(next, '^')
             this_round.append(next)
 
-        if x < N-1 and (x+1, y) not in blizzards_pos[r]:
+        if x < N-1 and (x+1, y) not in blizzards_pos[r%R]:
             next = Node(x+1, y, r)
             node.add_next(next, 'v')
             this_round.append(next)
 
-        if y > 0 and (x, y-1) not in blizzards_pos[r]:
+        if y > 0 and (x, y-1) not in blizzards_pos[r%R]:
             next = Node(x, y-1, r)
             node.add_next(next, '<')
             this_round.append(next)
 
-        if y < M-1 and (x, y+1) not in blizzards_pos[r]:
+        if y < M-1 and (x, y+1) not in blizzards_pos[r%R]:
             next = Node(x, y+1, r)
             node.add_next(next, '>')
             this_round.append(next)
 
-        if (x, y) not in blizzards_pos[r]:
+        if (x, y) not in blizzards_pos[r%R]:
             next = Node(x, y, r)
             node.add_next(next, 'w')
             this_round.append(next)
 
     last_round = this_round
 
-# for n, d in start_node.nexts:
-    # print(str(n), d)
+
 
 
 # BFS
@@ -118,6 +121,9 @@ start_node.path = ''
 while len(to_do) > 0:
     node = to_do.pop(0)
 
+    # print("eee")
+    # print(node)
+
     if node.path in done:
         continue
 
@@ -126,6 +132,10 @@ while len(to_do) > 0:
         to_do.append(n)
 
         if n.x == N-1 and n.y == M-1:
+            print(len(n.path)+1)
+            1/0
+            print("========================")
+            print(n)
             print(n.path)
 
     done.add(node)
