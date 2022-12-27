@@ -1,7 +1,7 @@
 from time import time
 from math import gcd
 
-with open("inputs/day_24_example.data") as file:
+with open("inputs/day_24.data") as file:
     lines = [line.rstrip() for line in file]
 
 blizzards_start = list()
@@ -26,7 +26,7 @@ blizzards = []
 
 blizzards.append({b for b in blizzards_start})
 
-# Blizzard number R-1 is the same as blizzard 0
+# Blizzard number R is the same as blizzard 0
 for _ in range(0, R-1):
     s = set()
     for x, y, d in blizzards[-1]:
@@ -40,105 +40,31 @@ for _ in range(0, R-1):
 blizzards_pos = [{(b[0], b[1]) for b in bliz} for bliz in blizzards]
 
 
-class Node():
-    def __init__(self, x, y, r):
-        self.x = x
-        self.y = y
-        self.r = r
-        self.nexts = []
-        self.path = None
-
-    # d can be w for wait
-    def add_next(self, node, d):
-        self.nexts.append((node, d))
-
-    def get_coords(self):
-        return (self.x, self.y)
-
-    def __str__(self):
-        return f"<NODE> {self.x}, {self.y} - round {self.r}"
+print("Blizzards set up, start part 1")
+print(N, M)
 
 
-start_node = Node(start[0], start[1], 0)
-
-nextouille = Node(0, 0, 1)
-start_node.add_next(nextouille, 'v')
-
-last_round = [nextouille]
-
-
-# This is incomplete for certain cases where we need to come back to a node that couldn't be reached after one R of blizzards
-for r in range(2, 3 * R):
-    this_round = []
-
-    # print("%%%%%%%%%%%%%%%%%%%%%%%%%%")
-
-    for node in last_round:
-        # print(node)
-
-        to_test = []
-
-        x, y = node.get_coords()
-
-        if x > 0 and (x-1, y) not in blizzards_pos[r%R]:
-            next = Node(x-1, y, r)
-            node.add_next(next, '^')
-            this_round.append(next)
-
-        if x < N-1 and (x+1, y) not in blizzards_pos[r%R]:
-            next = Node(x+1, y, r)
-            node.add_next(next, 'v')
-            this_round.append(next)
-
-        if y > 0 and (x, y-1) not in blizzards_pos[r%R]:
-            next = Node(x, y-1, r)
-            node.add_next(next, '<')
-            this_round.append(next)
-
-        if y < M-1 and (x, y+1) not in blizzards_pos[r%R]:
-            next = Node(x, y+1, r)
-            node.add_next(next, '>')
-            this_round.append(next)
-
-        if (x, y) not in blizzards_pos[r%R]:
-            next = Node(x, y, r)
-            node.add_next(next, 'w')
-            this_round.append(next)
-
-    last_round = this_round
-
-
-
-
-# BFS
 done = set()
-to_do = list()
-to_do.append(start_node)
-start_node.path = ''
-
-
+to_do = [(-1, 0, 0)]
+deltas = [(dx, dy) for dx in [-1, 0, 1] for dy in [-1, 0, 1] if dx == 0 or dy == 0]
 
 while len(to_do) > 0:
-    node = to_do.pop(0)
+    x, y, r = to_do.pop(0)
 
-    # print("eee")
-    # print(node)
-
-    if node.path in done:
+    if (x, y, r%R) in done:
+        # print("caca")
         continue
+    done.add((x, y, r%R))
 
-    for n, d in node.nexts:
-        n.path = node.path + d
-        to_do.append(n)
+    r += 1
+    for dx, dy in deltas:
+        if (0 <= x+dx < N and 0 <= y+dy < M and (x+dx, y+dy) not in blizzards_pos[r%R]) or (x+dx == -1 and y+dy == 0):
+            to_do.append((x+dx, y+dy, r))
+            if x+dx == N-1 and y+dy == M-1:
+                print("PART 1 RESULT: ", r+1)   # One last step needed to escape the maze
+                1/0
 
-        if n.x == N-1 and n.y == M-1:
-            print(len(n.path)+1)
-            1/0
-            print("========================")
-            print(n)
-            print(n.path)
 
-    done.add(node)
 
 
 
