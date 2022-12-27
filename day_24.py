@@ -38,32 +38,49 @@ for _ in range(0, R-1):
 
 
 blizzards_pos = [{(b[0], b[1]) for b in bliz} for bliz in blizzards]
-
-
-print("Blizzards set up, start part 1")
-print(N, M)
-
-
-done = set()
-to_do = [(-1, 0, 0)]
 deltas = [(dx, dy) for dx in [-1, 0, 1] for dy in [-1, 0, 1] if dx == 0 or dy == 0]
 
-while len(to_do) > 0:
-    x, y, r = to_do.pop(0)
 
-    if (x, y, r%R) in done:
-        # print("caca")
-        continue
-    done.add((x, y, r%R))
+print("Blizzards set up")
 
-    r += 1
-    for dx, dy in deltas:
-        if (0 <= x+dx < N and 0 <= y+dy < M and (x+dx, y+dy) not in blizzards_pos[r%R]) or (x+dx == -1 and y+dy == 0):
-            to_do.append((x+dx, y+dy, r))
-            if x+dx == N-1 and y+dy == M-1:
-                print("PART 1 RESULT: ", r+1)   # One last step needed to escape the maze
-                1/0
 
+# Assuming the end is in the grid :)
+def steps(start_round, start, end):
+    xs, ys = start
+    to_do = [(xs, ys, start_round)]
+    xe, ye = end
+    done = set()
+
+    while len(to_do) > 0:
+        x, y, r = to_do.pop(0)
+        if (x, y, r%R) in done:
+            continue
+        done.add((x, y, r%R))
+
+        r += 1
+        for dx, dy in deltas:
+            if (0 <= x+dx < N and 0 <= y+dy < M and (x+dx, y+dy) not in blizzards_pos[r%R]) or (x+dx == xs and y+dy == ys):
+                to_do.append((x+dx, y+dy, r))
+                if x+dx == xe and y+dy == ye:
+                    return r+1-start_round   # One last step needed to escape the maze
+
+
+# Part 1
+res = steps(0, (-1, 0), (N-1, M-1))
+print("PART 1:", res)
+
+
+# Part 2
+r1 = steps(0, (-1, 0), (N-1, M-1))
+print(r1)
+
+r2 = steps(r1, (N, M-1), (0, 0))
+print(r2)
+
+r3 = steps(r1+r2, (-1, 0), (N-1, M-1))
+print(r3)
+
+print("PART 2 TOTAL:", r1 + r2 + r3)
 
 
 
