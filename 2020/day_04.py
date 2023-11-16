@@ -2,8 +2,6 @@ import sys
 import re
 
 fn = 'inputs/' + __file__.replace('.py', '') + ('.example' if len(sys.argv) > 1 else '') + '.data'
-
-# with open("inputs/day_01.data") as file:
 with open(fn) as file:
     lines = [line.rstrip() for line in file]
 
