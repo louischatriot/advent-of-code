@@ -52,3 +52,4 @@ step, res = buses[0]
 for step2, delta2 in buses[1:]:
     res, step = integrate(res, step, step2, delta2)
 
+print(res)
