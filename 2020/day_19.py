@@ -83,7 +83,6 @@ the_re = re.compile(regexp)
 res = 0
 for msg in messages:
     if the_re.match(msg):
-        print(msg)
         res += 1
 
 print(res)
