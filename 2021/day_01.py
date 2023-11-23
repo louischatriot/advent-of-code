@@ -13,3 +13,24 @@ with open(fn) as file:
 
 
 # PART 1
+data = [int(l) for l in lines]
+res = 0
+for i in range(1, len(data)):
+    if data[i] > data[i-1]:
+        res += 1
+print(res)
+
+
+# PART 2
+measurements = []
+for i in range(0, len(data) - 2):
+    measurements.append(data[i] + data[i+1] + data[i+2])
+
+res = 0
+for i in range(1, len(measurements)):
+    if measurements[i] > measurements[i-1]:
+        res += 1
+print(res)
+
+
+
