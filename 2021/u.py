@@ -1,3 +1,8 @@
+import re
+
+# Regexes
+all_lowercase = re.compile('^[a-z]+$')
+
 def split_at_char(s, n):
     l = s[0:n]
     r = s[n:]
@@ -5,6 +10,7 @@ def split_at_char(s, n):
 
 
 ortho_neighbours = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+all_neighbours = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
 def get_pos(arr, i, j, di, dj, default):
     if not (0 <= i + di < len(arr)):
@@ -53,4 +59,11 @@ def __aps(res, rem):
 
 def all_partial_sums(l):
     return __aps([0], l)
+
+
+def is_all_lowercase(s):
+    return all_lowercase.match(s) is not None
+
+
+
 
