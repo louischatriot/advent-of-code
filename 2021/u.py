@@ -4,12 +4,14 @@ def split_at_char(s, n):
     return (l, r)
 
 
-def get_pos(arr, i, j, di, dj):
+ortho_neighbours = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+def get_pos(arr, i, j, di, dj, default):
     if not (0 <= i + di < len(arr)):
-        return '.'
+        return default
 
     if not (0 <= j + dj < len(arr[i])):
-        return '.'
+        return default
 
     else:
         return arr[i+di][j+dj]
