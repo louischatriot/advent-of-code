@@ -42,8 +42,62 @@ while (N-1, M-1) in unvisited:
             dist = distances[node[0]][node[1]]
             current = node
 
+print(distances[N-1][M-1])
+
+
+# PART 2
+bigmatrix = [[0 for _ in range(0, 5*M)] for _ in range(0, 5*N)]
+
+for i in range(0, N):
+    for j in range(0, M):
+        for bigi in range(0, 5):
+            for bigj in range(0, 5):
+                nv = matrix[i][j] + bigi+bigj
+                if nv > 9:
+                    nv -= 9
+                if nv > 9:
+                    nv -= 9
+                bigmatrix[N * bigi + i][M * bigj + j] = nv
+
+matrix = bigmatrix
+
+
+d_bound = sum([sum(l) for l in matrix]) + 1
+N = len(matrix)
+M = len(matrix[0])
+
+unvisited = set()
+for i in range(0, N):
+    for j in range(0, M):
+        unvisited.add((i, j))
+
+distances = [[d_bound for _ in range(0, M)] for _ in range(0, N)]
+distances[0][0] = 0
+current = (0, 0)
+
+print(len(unvisited))
+
+while (N-1, M-1) in unvisited:
+    i, j = current
+
+    for di, dj in u.ortho_neighbours:
+        if (i+di, j+dj) in unvisited:
+            distances[i+di][j+dj] = min(distances[i+di][j+dj], distances[i][j] + matrix[i+di][j+dj])
+
+    unvisited.remove(current)
+
+    dist = d_bound
+    for node in unvisited:
+        if distances[node[0]][node[1]] < dist:  # Should really stop with the matrix representations of graphs
+            dist = distances[node[0]][node[1]]
+            current = node
+
+    if len(unvisited) % 100 == 0:
+        print(len(unvisited))
 
 print(distances[N-1][M-1])
+
+
 
 
 
