@@ -1,3 +1,4 @@
+import heapq
 import re
 from collections import defaultdict
 
@@ -105,6 +106,38 @@ def least_common(iterable):
     return k0, f[k0]
 
 
+REMOVED = (999999999999, 99999999999999)
+class PriorityQueue:
 
+    def __init__(self):
+        self.pq = []
+        self.entry_finder = {}
+
+    def get_task(self, task):
+        entry = self.entry_finder[task]
+        return (task, entry[0])
+
+    def add_task(self, task, priority):
+        'Add a new task or update the priority of an existing task'
+        if task in self.entry_finder:
+            self.remove_task(task)
+        entry = [priority, task]
+        self.entry_finder[task] = entry
+        heapq.heappush(self.pq, entry)
+
+    def remove_task(self, task):
+        'Mark an existing task as REMOVED.  Raise KeyError if not found.'
+        entry = self.entry_finder.pop(task)
+        entry[-1] = REMOVED
+
+    def pop_task(self):
+        'Remove and return the lowest priority task. Raise KeyError if empty.'
+        while self.pq:
+            priority, task = heapq.heappop(self.pq)
+            if task != REMOVED:
+                del self.entry_finder[task]
+                return (task, priority)
+
+        return None, None
 
 

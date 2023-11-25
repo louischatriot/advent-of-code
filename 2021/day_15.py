@@ -71,34 +71,34 @@ for i in range(0, N):
     for j in range(0, M):
         unvisited.add((i, j))
 
-distances = [[d_bound for _ in range(0, M)] for _ in range(0, N)]
-distances[0][0] = 0
-current = (0, 0)
+# This Dijkstra is ugly, fix and package it for next times
 
-print(len(unvisited))
+dist_pq = u.PriorityQueue()
+for i in range(0, N):
+    for j in range(0, M):
+        if i != 0 or j != 0:
+            dist_pq.add_task((i, j), d_bound)
+
+current = (0, 0)
+current_dist = 0
 
 while (N-1, M-1) in unvisited:
     i, j = current
 
     for di, dj in u.ortho_neighbours:
         if (i+di, j+dj) in unvisited:
-            distances[i+di][j+dj] = min(distances[i+di][j+dj], distances[i][j] + matrix[i+di][j+dj])
+            _, d1 = dist_pq.get_task((i+di, j+dj))
+            d = min(d1, current_dist + matrix[i+di][j+dj])
+            dist_pq.add_task((i+di, j+dj), d)
 
     unvisited.remove(current)
 
-    dist = d_bound
-    for node in unvisited:
-        if distances[node[0]][node[1]] < dist:  # Should really stop with the matrix representations of graphs
-            dist = distances[node[0]][node[1]]
-            current = node
+    current, current_dist = dist_pq.pop_task()
 
-    if len(unvisited) % 100 == 0:
-        print(len(unvisited))
+    if current == (N-1, M-1):
+        print(current_dist)
 
-print(distances[N-1][M-1])
-
-
-
-
+    if current is None:
+        break
 
 
