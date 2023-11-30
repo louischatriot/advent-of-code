@@ -77,8 +77,6 @@ def distance(room_idx, room_depth, hw_dest):
     # # # # # # # # #
 """
 
-# graphs = []
-# for _ in range(0, 25):
 
 nodes = set()
 nodes_to_do = list()
