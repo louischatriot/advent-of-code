@@ -110,20 +110,10 @@ while len(nodes_to_do) > 0:
         if depth == 1 and get_room(node, idx, 0) != amph:  # An amphipod is already in the room but it's not his destination
             continue
 
-        if hw <= idx + 1:  # Need to move right
-            if all(get_hallway(node, hw_mid) == '.' for hw_mid in range(hw+1, idx+2)):
-                new_state = set_hallway(node, hw, '.')
-                new_state = set_room(new_state, idx, depth, amph)
-
-                if new_state in nodes:
-                    continue
-
-                nodes_to_do.append(new_state)
-                d = distance(idx, depth, hw)
-                edges[node].append((new_state, d * energies[amph]))
-
-        else:  # Move left
-            if all(get_hallway(node, hw_mid) == '.' for hw_mid in range(idx+2, hw)):
+        if (
+            (hw <= idx + 1 and all(get_hallway(node, hw_mid) == '.' for hw_mid in range(hw+1, idx+2))) or
+            (hw > idx + 1 and all(get_hallway(node, hw_mid) == '.' for hw_mid in range(idx+2, hw)))
+        ):
                 new_state = set_hallway(node, hw, '.')
                 new_state = set_room(new_state, idx, depth, amph)
 
@@ -156,8 +146,6 @@ while len(nodes_to_do) > 0:
         # Move to the hallway left
         hw_dest = idx + 1
         while hw_dest >= 0:
-            # print(hw_dest)
-
             if get_hallway(node, hw_dest) != '.':  # Can't move left further
                 break
 
