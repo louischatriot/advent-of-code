@@ -1,3 +1,4 @@
+import itertools
 import heapq
 import re
 from collections import defaultdict
@@ -108,7 +109,8 @@ def least_common(iterable):
     return k0, f[k0]
 
 
-REMOVED = (999999999999, 99999999999999)
+# Tasks are strings
+REMOVED = '<removed-item>'
 class PriorityQueue:
 
     def __init__(self):
@@ -141,5 +143,43 @@ class PriorityQueue:
                 return (task, priority)
 
         return None, None
+
+
+# TODO: implement using best_predecessors to also give the path itself
+def do_dijkstra(nodes, edges, start_node, end_node):
+    # Should take sum of all distances to be sure
+    upper_bound = 99999999999999
+    distances = PriorityQueue()
+    unvisited = set()
+    best_predecessors = dict()
+
+    for node in nodes:
+        if node == start_node:
+            distances.add_task(node, 0)
+        else:
+            distances.add_task(node, upper_bound)
+
+        unvisited.add(node)
+
+    while True:
+        current, current_dist = distances.pop_task()
+
+        if current == end_node:
+            return current_dist
+
+        for new_state, d in edges[current]:
+
+            if new_state in unvisited:
+                _, dist = distances.get_task(new_state)
+                dist = min(dist, d + current_dist)
+                distances.add_task(new_state, dist)
+
+                best_predecessors[new_state] = current
+
+        unvisited.remove(current)
+
+
+
+
 
 
