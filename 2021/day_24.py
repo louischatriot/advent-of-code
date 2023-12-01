@@ -12,7 +12,7 @@ with open(fn) as file:
     lines = [line.rstrip() for line in file]
 
 
-# PART 1
+# PART 1 & 2
 """
 n_digits = 14
 batch = len(lines) // n_digits
@@ -30,60 +30,58 @@ for b in range(0, batch):
     print(l)
 """
 
-d = [-99999999, 1, 1, 1, 1, 26, 1, 26, 1, 26, 26, 1, 26, 26, 26]
-a = [-99999999, 14, 11, 12, 11, -10, 15, -14, 10, -4, -3, 13, -3, -9, -12]
-b = [-99999999, 16, 3, 2, 7, 13, 6, 10, 11, 6, 5, 11, 4, 4, 6]
+d = [1, 1, 1, 1, 26, 1, 26, 1, 26, 26, 1, 26, 26, 26]
+a = [14, 11, 12, 11, -10, 15, -14, 10, -4, -3, 13, -3, -9, -12]
+b = [16, 3, 2, 7, 13, 6, 10, 11, 6, 5, 11, 4, 4, 6]
 
 # Increase if we need to search more
 z_boundary = 1000000
-possible_z = set()
-for z in range(0, z_boundary):
-    possible_z.add(z)
-    possible_z.add(-z)
+R = 14
+
+possible_outputs = { 0 }
+outputs_by_stage = [possible_outputs]
 
 
-dn, an, bn = d[-1], a[-1], b[-1]
+for r in range(1, R+1):
+    dn, an, bn = d[-r], a[-r], b[-r]
+    new_possible_outputs = set()
 
-new_possible_z = set()
-for wn in range(0, 10):
-    for znminus in possible_z:
-        xn = znminus % 26
-        zn = znminus // dn
-        xn = xn + an
-        if xn != wn:
-            zn = 26 * zn + wn + bn
-
-        if zn == 0:
-            new_possible_z.add(znminus)
-
-print(new_possible_z)
-
-# First step is quite slow
-new_possible_z = {12, 13, 14, 15, 16, 17, 18, 19, 20, 21}
-possible_z = new_possible_z
-
-
-
-
-
-for round in range(2, 14):
-    dn, an, bn = d[-round], a[-round], b[-round]
-
-    new_possible_z = set()
-    for wn in range(0, 10):
-        for znminus in possible_z:
-            xn = znminus % 26
+    for wn in range(1, 10):
+        for znminus in range(-z_boundary, z_boundary):
+            xn = znminus % 26 + an
             zn = znminus // dn
-            xn = xn + an
+
             if xn != wn:
                 zn = 26 * zn + wn + bn
 
-            if zn == 0:
-                new_possible_z.add(znminus)
+            if zn in possible_outputs:
+                new_possible_outputs.add(znminus)
 
-    print(new_possible_z)
-    possible_z = new_possible_z
+    print(len(new_possible_outputs))
+    possible_outputs = new_possible_outputs
+    outputs_by_stage = [possible_outputs] + outputs_by_stage
 
+
+print("outputs by stage", len(outputs_by_stage))
+
+
+z = outputs_by_stage[0].pop()
+
+for r in range(0, R):
+    dn, an, bn = d[r], a[r], b[r]
+
+    # for wn in range(9, 0, -1):  # PART 1
+    for wn in range(1, 10):  # PART 2
+        xn = z % 26 + an
+        zn = z // dn
+
+        if xn != wn:
+            zn = 26 * zn + wn + bn
+
+        if zn in outputs_by_stage[r+1]:
+            print("FOUND", wn)
+            z = zn
+            break
 
 
 
