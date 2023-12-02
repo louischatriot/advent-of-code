@@ -42,8 +42,31 @@ print("Generated rotation matrices:", len(matrices))
 def rotate(m, va, vb, vc):
     return tuple(m[i][0] * va + m[i][1] * vb + m[i][2] * vc for i in range(0, 3))
 
-# for m in matrices:
-    # print(rotate(m, 8, 0, 7))
+scanners = []
+current_scanner = []
+for l in lines[1:]:
+    if l == '':
+        continue
+    elif l[0:3] == '---':
+        scanners.append(current_scanner)
+        current_scanner = []
+    else:
+        current_scanner.append(tuple(map(int, l.split(','))))
+
+scanners.append(current_scanner)
+
+print("Parsed scanners:", len(scanners))
+
+
+def signature(points):
+    pass
+
+
+for s1 in scanners:
+    for s2 in scanners:
+        if s1 == s2:
+            continue
+
 
 
 
