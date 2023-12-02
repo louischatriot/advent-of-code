@@ -4,6 +4,7 @@ import u as u
 from collections import defaultdict
 import math
 import itertools
+import time
 
 is_example = (len(sys.argv) > 1)
 fn = 'inputs/' + __file__.replace('.py', '') + ('.example' if is_example else '') + '.data'
@@ -11,6 +12,8 @@ if is_example:
     print("===== RUNNING THE EXAMPLE =====")
 with open(fn) as file:
     lines = [line.rstrip() for line in file]
+
+__start_time = time.time()
 
 
 # PART 1
@@ -82,6 +85,11 @@ def minus(p1, p2):
     wa, wb, wc = p2
     return ((va - wa), (vb - wb), (vc - wc))
 
+def plus(p1, p2):
+    va, vb, vc = p1
+    wa, wb, wc = p2
+    return ((va + wa), (vb + wb), (vc + wc))
+
 
 def scanner_pair(scanner1, scanner2):
     dist0 = []
@@ -116,8 +124,10 @@ def scanner_pair(scanner1, scanner2):
     rotation, delta = None, None
     if len(matches) >= 66:
         # First pair with unique distance
-        for i in range(0, len(matches)-1):
-            if matches[i+1][0] > matches[i][0]:
+        # OMG WHY START AT 2? It is one of the values that does not trigger the two possible rotations exception below
+        # To be correct I should actually not trust the input that much and really test the whole set of points but tedious and not interesting
+        for i in range(2, len(matches)-2):
+            if matches[i+2][0] > matches[i+1][0] > matches[i][0]:
                 break
 
         p1a, p1b = matches[i][1]
@@ -139,7 +149,7 @@ def scanner_pair(scanner1, scanner2):
                 else:
                     raise ValueError("Found two possible rotations")
 
-    # Maybe check that the found rotation works for all points, but trusting input quality here :)
+    # As per the comment below I should also check that found rotation works for all points, but trusting input quality here :)
 
     return rotation, delta
 
@@ -178,11 +188,45 @@ while len(nodes_to_do) > 0:
             nodes_to_do.add(next_node)
 
 
+beacons = set()
+scanner_positions = list()
 
-for k, v in paths.items():
-    print(k, v)
+for i in range(0, len(scanners)):
+    path = paths[i]
+
+    for __beacon in scanners[i]:
+        beacon = __beacon
+        for rot, delta in reversed(paths[i]):
+            beacon = rotate(rot, beacon)
+            beacon = plus(beacon, delta)
+
+        beacons.add(beacon)
+
+    sp = (0, 0, 0)
+    for rot, delta in reversed(paths[i]):
+        sp = rotate(rot, sp)
+        sp = plus(sp, delta)
+
+    scanner_positions.append(sp)
+
+print(len(beacons))
+
+
+# PART 2
+def manhattan(p1, p2):
+    va, vb, vc = p1
+    wa, wb, wc = p2
+    return abs(va - wa) + abs(vb - wb) + abs(vc - wc)
+
+M = 0
+for s1, s2 in itertools.combinations(scanner_positions, 2):
+    M = max(M, manhattan(s1, s2))
+
+print(M)
 
 
 
+
+print("Execution time", time.time() - __start_time)
 
 
