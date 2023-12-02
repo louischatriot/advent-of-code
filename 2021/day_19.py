@@ -144,12 +144,43 @@ def scanner_pair(scanner1, scanner2):
     return rotation, delta
 
 
-rot, delta = scanner_pair(scanners[0], scanners[1])
-print(rot)
-print(delta)
+nodes = set()
+edges = defaultdict(lambda: dict())
+
+
+for i, s in enumerate(scanners):
+    nodes.add(i)
+
+    for j, t in enumerate(scanners):
+        if s == t:
+            continue
+
+        rot, delta = scanner_pair(s, t)
+
+        if rot == None:
+            continue
+
+        edges[i][j] = (rot, delta)
+
+
+start_node = 0
+paths = { start_node: [] }
+nodes_to_do = { start_node }
+
+while len(nodes_to_do) > 0:
+    node = nodes_to_do.pop()
+    base_path = paths[node]
+
+    for next_node, edge in edges[node].items():
+
+        if next_node not in paths:
+            paths[next_node] = base_path + [edge]
+            nodes_to_do.add(next_node)
 
 
 
+for k, v in paths.items():
+    print(k, v)
 
 
 
