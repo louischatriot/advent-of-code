@@ -3,6 +3,7 @@ import re
 import u as u
 from collections import defaultdict
 import math
+import itertools
 
 is_example = (len(sys.argv) > 1)
 fn = 'inputs/' + __file__.replace('.py', '') + ('.example' if is_example else '') + '.data'
@@ -39,8 +40,11 @@ for a in range(0, 3):
 
 print("Generated rotation matrices:", len(matrices))
 
-def rotate(m, va, vb, vc):
+def rotate(m, p):
+    va, vb, vc = p
     return tuple(m[i][0] * va + m[i][1] * vb + m[i][2] * vc for i in range(0, 3))
+
+
 
 scanners = []
 current_scanner = []
@@ -54,21 +58,161 @@ for l in lines[1:]:
         current_scanner.append(tuple(map(int, l.split(','))))
 
 scanners.append(current_scanner)
-
 print("Parsed scanners:", len(scanners))
 
 
 def signature(points):
-    pass
+    ref = points[0]
+    l = [str(p[0] - ref[0]) + ',' + str(p[1] - ref[1]) + ',' + str(p[2] - ref[2]) for p in points]
+    l.sort()
+    return ';;'.join(l)
 
 
-for s1 in scanners:
-    for s2 in scanners:
-        if s1 == s2:
+def d(p1, p2):
+    va, vb, vc = p1
+    wa, wb, wc = p2
+    return (va - wa) ** 2 + (vb - wb) ** 2 + (vc - wc) ** 2
+
+def eql(p1, p2):
+    va, vb, vc = p1
+    wa, wb, wc = p2
+    return (va == wa) and (vb == wb) and (vc == wc)
+
+def minus(p1, p2):
+    va, vb, vc = p1
+    wa, wb, wc = p2
+    return ((va - wa), (vb - wb), (vc - wc))
+
+
+def scanner_pair(scanner1, scanner2):
+    dist0 = []
+    for p1, p2 in itertools.combinations(scanner1, 2):
+        if p1 != p2:
+            dist0.append((d(p1, p2), p1, p2))
+
+    dist0.sort()
+
+    dist1 = []
+    for p1, p2 in itertools.combinations(scanner2, 2):
+        if p1 != p2:
+            dist1.append((d(p1, p2), p1, p2))
+
+    dist1.sort()
+
+    matches = []
+    i, j = 0, 0
+    while i < len(dist0) and j < len(dist1):
+        if dist0[i][0] == dist1[j][0]:
+            matches.append((dist0[i][0], dist0[i][1:], dist1[j][1:]))
+            i += 1
+            j += 1
+
+        elif dist0[i][0] < dist1[j][0]:
+            i += 1
+
+        else:
+            j += 1
+
+    # 66 means 12 points
+    rotation = None
+    if len(matches) >= 66:
+        # First pair with unique distance
+        for i in range(0, len(matches)-1):
+            if matches[i+1][0] > matches[i][0]:
+                break
+
+        p1a, p1b = matches[i][1]
+        p2a, p2b = matches[i][2]
+
+        for m in matrices:
+            q2a = rotate(m, p2a)
+            q2b = rotate(m, p2b)
+
+            if eql(minus(p1a, p1b), minus(q2a, q2b)) or eql(minus(p1a, p1b), minus(q2b, q2a)):
+                if rotation is None:
+                    rotation = m
+                else:
+                    raise ValueError("Found two possible rotations")
+
+    # Maybe check that the found rotation works for all points, but trusting input quality here :)
+
+    return rotation
+
+
+rot = scanner_pair(scanners[1], scanners[4])
+print(rot)
+
+
+
+
+sys.exit(0)
+
+sigs1 = set()
+for points1 in itertools.combinations(scanners[0], S):
+    sigs1.add(signature(points1))
+
+sigs2 = set()
+for points2 in itertools.combinations(scanners[1], S):
+    for m in matrices:
+        if signature([rotate(m, p) for p in points2]) in sigs1:
+            print("MATCH")
+
+
+
+
+
+    # n += 1
+    # if n % 10000 == 0:
+        # print(n)
+
+
+print(len(sigs1))
+
+1/0
+
+for scanner1 in scanners:
+    for scanner2 in scanners:
+        if scanner1 == scanner2:
             continue
 
 
+        for points1 in itertools.combinations(scanner1, 2):
+            matches = []
+            for m in matrices:
+                for points2 in itertools.combinations(scanner2, 2):
+                    __points2 = [rotate(m, p) for p in points2]
 
+                    if signature(points1) == signature(__points2):
+
+                        # CHECK FURTHER
+                        found = None
+                        for p1 in scanner1:
+                            if p1 in points1:
+                                continue
+
+                            for p2 in scanner2:
+                                if p2 in points2:
+                                    continue
+
+                                if signature(points1 + (p1)) == signature(points2 + (p2)):
+                                    found = p1, p2
+                                    break
+
+                            if found is not None:
+                                break
+
+                            if found:
+                                print("FOUND")
+
+
+
+                        matches.append([points1, __points2])
+
+                print("Matches", len(matches), m)
+
+
+
+        1/0
 
 
 
