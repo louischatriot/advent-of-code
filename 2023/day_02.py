@@ -3,6 +3,7 @@ import re
 import u as u
 from collections import defaultdict
 import math
+import itertools
 
 is_example = (len(sys.argv) > 1)
 fn = 'inputs/' + __file__.replace('.py', '') + ('.example' if is_example else '') + '.data'
