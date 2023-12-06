@@ -4,6 +4,7 @@ import u as u
 from collections import defaultdict
 import math
 import itertools
+import time
 
 is_example = (len(sys.argv) > 1)
 fn = 'inputs/' + __file__.replace('.py', '') + ('.example' if is_example else '') + '.data'
@@ -11,6 +12,7 @@ if is_example:
     print("===== RUNNING THE EXAMPLE =====")
 with open(fn) as file:
     lines = [line.rstrip() for line in file]
+start_time = time.time()
 
 
 # PART 1
@@ -107,4 +109,5 @@ for rl, ru in res:
 
 print(best)
 
+print(time.time() - start_time)
 
