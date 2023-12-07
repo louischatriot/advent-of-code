@@ -13,19 +13,31 @@ with open(fn) as file:
     lines = [line.rstrip() for line in file]
 
 
-# PART 1
-comp_template = [int(l) for l in lines[0].split(',')]
-
 class Computer:
     def __init__(self, program):
-        self.program = [n for n in program]
+        self.program = [n for n in program] + [0 for _ in range(0, 100000)]  # Large memory!
         self.idx = 0
+        self.relative_base = 0
 
     def get_value(self, idx, mode):
         if mode == '0':  # Position mode
             return self.program[self.program[idx]]
         elif mode == '1':  # Immediate mode
             return self.program[idx]
+        elif mode == '2':
+            return self.program[self.program[idx] + self.relative_base]
+        else:
+            raise ValueError(f"Unknown mode {mode}")
+
+    def set_value(self, idx, mode, value):
+        if mode == '0':  # Position mode
+            self.program[self.program[idx]] = value
+        elif mode == '1':  # Immediate mode
+            self.program[idx] = value
+        elif mode == '2':
+            self.program[self.program[idx] + self.relative_base] = value
+        else:
+            raise ValueError(f"Unknown mode {mode}")
 
     def run_until_io(self):
         while True:
@@ -36,6 +48,7 @@ class Computer:
             if opcode == '00099':
                 return None
 
+            # Addition (1), multiplication (2), lt comparison (7), eql comparison (8)
             if opcode[3:] in ['01', '02', '07', '08']:  # 4 parameter instruction
                 a = self.get_value(self.idx+1, opcode[2])
                 b = self.get_value(self.idx+2, opcode[1])
@@ -64,6 +77,7 @@ class Computer:
 
                 self.idx += 4
 
+            # Conditional jump
             if opcode[3:] in ['05', '06']:
                 a = self.get_value(self.idx+1, opcode[2])
                 b = self.get_value(self.idx+2, opcode[1])
@@ -80,6 +94,12 @@ class Computer:
                     else:
                         self.idx += 3
 
+            # Relative base update
+            if opcode[3:] == '09':
+                self.relative_base += self.get_value(self.idx+1, opcode[2])
+                self.idx += 2
+
+            # Input (3) / output (8)
             if opcode[3:] in ['03', '04']:
                 return opcode
 
@@ -93,7 +113,9 @@ class Computer:
         if opcode[3:] != '03':
             raise ValueError("Ran until input but no input instruction")
 
-        self.program[self.program[self.idx+1]] = the_input
+        self.set_value(self.idx+1, opcode[2], the_input)
+
+        # self.program[self.program[self.idx+1]] = the_input
         self.idx += 2
 
 
@@ -110,47 +132,18 @@ class Computer:
         self.idx += 2
         return res
 
+# PART 1
+program = [int(n) for n in lines[0].split(',')]
+computer = Computer(program)
+
+computer.run_until_input(1)
+
+res = 0
+while res is not None:
+    res = computer.run_until_output()
+    print(res)
 
 
-best = -99999999999
-for sequence in itertools.permutations(range(5)):
-    comps = [Computer(comp_template), Computer(comp_template), Computer(comp_template), Computer(comp_template), Computer(comp_template)]
-    for i, s in enumerate(sequence):
-        comps[i].run_until_input(s)
 
-    out = 0
-    for i in range(5):
-        comps[i].run_until_input(out)
-        out = comps[i].run_until_output()
-
-    best = max(best, out)
-
-print(best)
-
-
-# PART 2
-best = -99999999999
-for __sequence in itertools.permutations(range(5)):
-    sequence = [s+5 for s in __sequence]
-
-    comps = [Computer(comp_template), Computer(comp_template), Computer(comp_template), Computer(comp_template), Computer(comp_template)]
-    for i, s in enumerate(sequence):
-        comps[i].run_until_input(s)
-
-    out = 0
-    last_out = None
-    while out is not None:
-        for i in range(5):
-            comps[i].run_until_input(out)
-            out = comps[i].run_until_output()
-            if out is None:
-                break
-
-        if out is not None:
-            last_out = out
-
-    best = max(best, last_out)
-
-print(best)
 
 
