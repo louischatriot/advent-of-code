@@ -13,6 +13,7 @@ with open(fn) as file:
     lines = [line.rstrip() for line in file]
 
 
+# The code clearly balooned into this ugly mess but it works - I should make it more systematic
 class Computer:
     def __init__(self, program):
         self.program = [n for n in program] + [0 for _ in range(0, 100000)]  # Large memory!
@@ -33,7 +34,7 @@ class Computer:
         if mode == '0':  # Position mode
             self.program[self.program[idx]] = value
         elif mode == '1':  # Immediate mode
-            self.program[idx] = value
+            raise ValueError("Immediate mode refused for setting a value")
         elif mode == '2':
             self.program[self.program[idx] + self.relative_base] = value
         else:
@@ -54,26 +55,22 @@ class Computer:
                 b = self.get_value(self.idx+2, opcode[1])
 
                 if opcode[3:] == '01':
-                    res = a + b
-                    self.program[self.program[self.idx+3]] = res
+                    self.set_value(self.idx+3, opcode[0], a + b)
 
                 if opcode[3:] == '02':
-                    res = a * b
-                    self.program[self.program[self.idx+3]] = res
+                    self.set_value(self.idx+3, opcode[0], a * b)
 
                 if opcode[3:] == '07':
-                    c = self.program[self.idx+3]
                     if a < b:
-                        self.program[c] = 1
+                        self.set_value(self.idx+3, opcode[0], 1)
                     else:
-                        self.program[c] = 0
+                        self.set_value(self.idx+3, opcode[0], 0)
 
                 if opcode[3:] == '08':
-                    c = self.program[self.idx+3]
                     if a == b:
-                        self.program[c] = 1
+                        self.set_value(self.idx+3, opcode[0], 1)
                     else:
-                        self.program[c] = 0
+                        self.set_value(self.idx+3, opcode[0], 0)
 
                 self.idx += 4
 
@@ -114,8 +111,6 @@ class Computer:
             raise ValueError("Ran until input but no input instruction")
 
         self.set_value(self.idx+1, opcode[2], the_input)
-
-        # self.program[self.program[self.idx+1]] = the_input
         self.idx += 2
 
 
@@ -135,7 +130,6 @@ class Computer:
 # PART 1
 program = [int(n) for n in lines[0].split(',')]
 computer = Computer(program)
-
 computer.run_until_input(1)
 
 res = 0
@@ -144,6 +138,14 @@ while res is not None:
     print(res)
 
 
+# PART 2
+program = [int(n) for n in lines[0].split(',')]
+computer = Computer(program)
+computer.run_until_input(2)
 
+res = 0
+while res is not None:
+    res = computer.run_until_output()
+    print(res)
 
 
