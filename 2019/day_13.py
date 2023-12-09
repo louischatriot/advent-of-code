@@ -44,6 +44,8 @@ print(res)
 
 
 # PART 2
+# #dirtysaturdays --> I put unbreakable walls on the bottom line to avoid having to code the movement of the paddle
+# If I had to code I would just move it under the ball at all times
 matrix = [[' ' for _ in range(mx, Mx+1)] for _ in range(my, My+1)]
 for x, y, tile_id in tiles:
     v = ' '
@@ -63,7 +65,9 @@ for x, y, tile_id in tiles:
 for l in matrix:
     print(' '.join(l))
 
-
+program = [int(n) for n in lines[0].split(',')]
+program[0] = 2
+computer = Computer(program)
 
 
 
