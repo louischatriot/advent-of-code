@@ -44,8 +44,6 @@ print(res)
 
 
 # PART 2
-# #dirtysaturdays --> I put unbreakable walls on the bottom line to avoid having to code the movement of the paddle
-# If I had to code I would just move it under the ball at all times
 matrix = [[' ' for _ in range(mx, Mx+1)] for _ in range(my, My+1)]
 for x, y, tile_id in tiles:
     v = ' '
@@ -68,6 +66,42 @@ for l in matrix:
 program = [int(n) for n in lines[0].split(',')]
 program[0] = 2
 computer = Computer(program)
+
+res = 0
+ball_x = 20
+paddle_x = 20
+while True:
+    opcode = computer.run_until_io()
+
+    if opcode is None:
+        print(res)
+        break
+
+    if opcode[3:] == '03':
+        v = 0
+        if paddle_x < ball_x:
+            v = 1
+        if paddle_x > ball_x:
+            v = -1
+        computer.run_until_input(v)
+
+    elif opcode[3:] == '04':
+        x = computer.run_until_output()
+        y = computer.run_until_output()
+        v = computer.run_until_output()
+
+        if x == -1 and y == 0:
+            res = v
+
+        if v == 4:
+            ball_x = x
+
+        if v == 3:
+            paddle_x = x
+
+
+    else:
+        raise ValueError("WTF")
 
 
 
