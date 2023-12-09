@@ -2,6 +2,7 @@ import itertools
 import heapq
 import re
 from collections import defaultdict
+import math
 
 # Regexes
 all_lowercase = re.compile('^[a-z]+$')
@@ -179,6 +180,8 @@ def do_dijkstra(nodes, edges, start_node, end_node):
         unvisited.remove(current)
 
 
+def lcm(a, b):
+    return a * b // math.gcd(a, b)
 
 
 
