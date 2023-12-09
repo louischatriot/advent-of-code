@@ -12,11 +12,6 @@ if is_example:
 with open(fn) as file:
     lines = [line.rstrip() for line in file]
 
-def pairwise(iterable):
-    "s -> (s0,s1), (s1,s2), (s2, s3), ..."
-    a, b = itertools.tee(iterable)
-    next(b, None)
-    return zip(a, b)
 
 # PART 1
 res = 0
@@ -26,7 +21,7 @@ for l in lines:
     endings = [seq[-1]]
 
     while not all(n == 0 for n in seq):
-        seq = [b-a for a, b in pairwise(seq)]
+        seq = [b-a for a, b in u.pairwise(seq)]
         endings.append(seq[-1])
 
     nv = sum(endings)
@@ -43,7 +38,7 @@ for l in lines:
     begs = [seq[0]]
 
     while not all(n == 0 for n in seq):
-        seq = [b-a for a, b in pairwise(seq)]
+        seq = [b-a for a, b in u.pairwise(seq)]
         begs.append(seq[0])
 
     n = 0
