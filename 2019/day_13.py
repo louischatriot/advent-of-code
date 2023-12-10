@@ -44,8 +44,7 @@ print(res)
 
 
 # PART 2
-matrix = [[' ' for _ in range(mx, Mx+1)] for _ in range(my, My+1)]
-for x, y, tile_id in tiles:
+def symbol(tile_id):
     v = ' '
     if tile_id == 0:
         v = '.'
@@ -57,8 +56,12 @@ for x, y, tile_id in tiles:
         v = '_'
     elif tile_id == 4:
         v = 'o'
+    return v
 
-    matrix[y][x] = v
+
+matrix = [[' ' for _ in range(mx, Mx+1)] for _ in range(my, My+1)]
+for x, y, tile_id in tiles:
+    matrix[y][x] = symbol(tile_id)
 
 for l in matrix:
     print(' '.join(l))
@@ -98,6 +101,12 @@ while True:
 
         if v == 3:
             paddle_x = x
+
+        matrix[y][x] = symbol(v)
+
+        # Uncomment to see some kind of animation
+        # for l in matrix:
+            # print(' '.join(l))
 
 
     else:
