@@ -64,8 +64,8 @@ for v, d in visited.items():
     visited_matrix[y][x] = matrix[y][x]
     res = max(res, d)
 
-for l in visited_matrix:
-    print(' '.join(map(str, l)))
+# for l in visited_matrix:
+    # print(' '.join(map(str, l)))
 
 print(res)
 
@@ -129,6 +129,50 @@ while len(to_classify) > 0:
         # visited_matrix[y][x] = i
 # for l in visited_matrix:
     # print(' '.join(map(str, l)))
+
+# Would compute faster to first simplify the path i.e. only keep turning segments but I'm lazy
+path.append(path[0])
+xo, yo = -9999999, -9999999
+
+res = 0
+for component in components:
+    xm, ym = component.pop()
+    component.add((xm, ym))
+
+    inside = False
+    for a, b in u.pairwise(path):
+        xa, ya = a
+        xb, yb = b
+
+        mo = (ym - yo) / (xm - xo)
+
+        if ya == yb:
+            y = ya
+            x = xo + (ya - yo) / mo
+        else:  # xa == xb
+            x = xa
+            y = yo + mo * (xa - xo)
+
+        ps1 = (xa - x) * (xb - x) + (ya - y) * (yb - y)
+        ps2 = (xo - x) * (xm - x) + (yo - y) * (ym - y)
+        if ps1 < 0 and ps2 < 0:
+            inside = not inside
+
+    if inside:
+        res += len(component)
+
+    # for x, y in component:
+        # if inside:
+            # visited_matrix[y][x] = 'I'
+        # else:
+            # visited_matrix[y][x] = 'O'
+
+# for l in visited_matrix:
+    # print(' '.join(map(str, l)))
+
+print(res)
+
+
 
 
 
