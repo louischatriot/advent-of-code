@@ -184,5 +184,47 @@ def lcm(a, b):
     return a * b // math.gcd(a, b)
 
 
+# nodes set ; edges dict of start, set of ends
+# https://en.wikipedia.org/wiki/Topological_sorting
+def topological_sort(nodes, edges):
+    incoming_edges = defaultdict(lambda: set())
+
+    for start, ends in edges.items():
+        for end in ends:
+            incoming_edges[end].add(start)
+
+    L = list()
+
+    # S initially all nodes with no incoming edges
+    S = set()
+    removed_edges = set()  # So as not to modify edges
+    for node in nodes:
+        if node not in incoming_edges:
+            S.add(node)
+
+    while len(S) > 0:
+        node = S.pop()
+        L.append(node)
+
+        for m in edges[node]:
+            if (node, m) in removed_edges:
+                continue
+
+            incoming_edges[m].remove(node)
+            removed_edges.add((node, m))
+
+            if len(incoming_edges[m]) == 0:
+                S.add(m)
+                del incoming_edges[m]
+
+    return L
+
+
+
+
+
+
+
+
 
 
