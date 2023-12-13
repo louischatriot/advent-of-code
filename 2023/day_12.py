@@ -14,7 +14,7 @@ with open(fn) as file:
 
 
 # PART 1
-# Brute forcing the shit out of it instead of going smart with leftmost and rightmost
+# Brute forcing the shit out of it instead of going smart with leftmost and rightmost (and knowing I will regret it for part 2)
 # cf this more efficient algorithm https://github.com/louischatriot/small-katas/blob/main/nonograms.py
 # Memoization brings only a minor speed up, removed it
 mem = dict()
