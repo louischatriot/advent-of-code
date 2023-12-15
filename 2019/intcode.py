@@ -112,3 +112,18 @@ class Computer:
         self.idx += 2
         return res
 
+
+    def run_until_input_ignore_output(self, the_input):
+        while True:
+            opcode = self.run_until_io()
+            if opcode[3:] == '04':
+                self.run_until_output()
+            else:
+                break
+        self.run_until_input(the_input)
+
+
+
+
+
+
