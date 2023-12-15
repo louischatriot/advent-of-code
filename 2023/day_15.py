@@ -30,3 +30,42 @@ for s in lines[0].split(','):
 print(res)
 
 
+# PART 2 - super not optimized
+boxes = [[] for _ in range(0, 256)]
+for inst in lines[0].split(','):
+    if inst[-1] == '-':
+        label = inst[0:-1]
+        box = get_hash(label)
+        boxes[box] = [lens for lens in boxes[box] if lens[0] != label]
+
+    else:
+        label, focal = inst.split('=')
+        focal = int(focal)
+        box = get_hash(label)
+
+        new_contents = []
+        replaced = False
+        for lab, foc in boxes[box]:
+            if lab != label:
+                new_contents.append((lab, foc))
+            else:
+                new_contents.append((label, focal))
+                replaced = True
+
+        if not replaced:
+            new_contents.append((label, focal))
+
+        boxes[box] = new_contents
+
+res = 0
+for box, contents in enumerate(boxes):
+    for idx, c in enumerate(contents):
+        res += (box+1) * (idx+1) * c[1]
+
+print(res)
+
+
+
+
+
+
