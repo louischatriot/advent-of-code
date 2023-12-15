@@ -18,6 +18,14 @@ ortho_neighbours = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 all_neighbours = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 all_neighbours_and_center = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 0), (0, 1), (1, -1), (1, 0), (1, 1)]
 
+def ortho_neighbours_iterator(data, i, j):
+    I, J = len(data), len(data[0])
+
+    for di, dj in ortho_neighbours:
+        if 0 <= i+di < I and 0 <= j+dj < J:
+            yield (i+di, j+dj, data[i+di][j+dj])
+
+
 def get_pos(arr, i, j, di, dj, default):
     if not (0 <= i + di < len(arr)):
         return default

@@ -25,7 +25,7 @@ while True:
     if out is None:
         break
     else:
-        if out == 10:
+        if out == 10 and len(l) > 0:
             data.append(l)
             l = []
         else:
@@ -33,3 +33,14 @@ while True:
 
 for l in data:
     print(''.join(l))
+
+si, sj = None, None
+for i, l in enumerate(data):
+    for j, c in enumerate(l):
+        if c != '.' and c != '#':
+            si, sj = i, j
+
+
+
+
+
