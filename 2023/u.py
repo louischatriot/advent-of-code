@@ -147,6 +147,8 @@ class PriorityQueue:
 
 
 # TODO: implement using best_predecessors to also give the path itself
+# nodes must be a set of strings (the node names)
+# edges must be a dict of node_name to list of node_name, distance (from key node name)
 def do_dijkstra(nodes, edges, start_node, end_node):
     # Should take sum of all distances to be sure
     upper_bound = 99999999999999
