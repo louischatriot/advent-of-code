@@ -110,6 +110,19 @@ def least_common(iterable):
     return k0, f[k0]
 
 
+def print_set(s, separator=' '):
+    mi, Mi, mj, Mj = 0, 0, 0, 0
+    for i, j in s:
+        mi, Mi, mj, Mj = min(mi, i), max(Mi, i), min(mj, j), max(Mj, j)
+
+    matrix = [['.' for _ in range(mj, Mj+1)] for _ in range(mi, Mi+1)]
+    for i, j in s:
+        matrix[i-mi][j-mj] = '#'
+
+    for l in matrix:
+        print(separator.join(l))
+
+
 # Tasks are strings
 REMOVED = '<removed-item>'
 class PriorityQueue:
