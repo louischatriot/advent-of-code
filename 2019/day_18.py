@@ -218,7 +218,7 @@ for di, dj in u.all_neighbours_and_center:
     if di == 0 or dj == 0:
         v = '#'
     else:
-        v = '@'
+        v = '.'
         new_starts.append((ni, nj))
 
     matrix[ni][nj] = v
@@ -275,7 +275,7 @@ def build_graph_robots(matrix, starts, links, all_keys, start_node, end_node):
                         edges[node].append((new_node, d))
 
                     else:
-                        new_node = node_name_robots(update_robots(robots, idx, i, j), keys + the_key)
+                        new_node = node_name_robots(update_robots(robots, idx, ik, jk), keys + the_key)
 
                         if new_node in nodes:
                             continue
@@ -296,17 +296,7 @@ end_node = "thats_all_folks"
 links = get_all_links(matrix, new_starts)
 nodes, edges = build_graph_robots(matrix, new_starts, links, all_keys, start_node, end_node)
 
-
-
 nodes.add(end_node)
-
-
-
-
-
-# for i, j in itertools.product(range(I), range(J)):
-    # if 'a' <= matrix[i][j] <= 'z':
-        # edges[node_name(i, j, all_keys)].append((end_node, 0))
 
 res = u.do_dijkstra(nodes, edges, start_node, end_node)
 print(res)
