@@ -18,6 +18,13 @@ ortho_neighbours = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 all_neighbours = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 all_neighbours_and_center = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 0), (0, 1), (1, -1), (1, 0), (1, 1)]
 
+def ortho_neighbours_iterator(data, i, j):
+    I, J = len(data), len(data[0])
+
+    for di, dj in ortho_neighbours:
+        if 0 <= i+di < I and 0 <= j+dj < J:
+            yield (i+di, j+dj, data[i+di][j+dj])
+
 def get_pos(arr, i, j, di, dj, default):
     if not (0 <= i + di < len(arr)):
         return default
@@ -110,10 +117,11 @@ def least_common(iterable):
     return k0, f[k0]
 
 
-def print_set(s, separator=' '):
-    mi, Mi, mj, Mj = 0, 0, 0, 0
-    for i, j in s:
-        mi, Mi, mj, Mj = min(mi, i), max(Mi, i), min(mj, j), max(Mj, j)
+def print_set(s, separator=' ', mi=None, Mi=None, mj=None, Mj=None):
+    if mi is None:
+        mi, Mi, mj, Mj = 0, 0, 0, 0
+        for i, j in s:
+            mi, Mi, mj, Mj = min(mi, i), max(Mi, i), min(mj, j), max(Mj, j)
 
     matrix = [['.' for _ in range(mj, Mj+1)] for _ in range(mi, Mi+1)]
     for i, j in s:
