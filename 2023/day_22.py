@@ -91,10 +91,45 @@ for idx, brick_name in enumerate(order):
 destroyable = set()
 for brick, supporters in supported_by.items():
     if len(supporters) == 1:
-        destroyable.add(supporters.pop())
+        supporter = supporters.pop()
+        destroyable.add(supporter)
+        supporters.add(supporter)  # Repairing
 
 res = len(bricks) - len(destroyable)
 print(res)
+
+
+# PART 2
+def get_destroyed(supporting, supported_by, brick):
+    supporting = {k: {b for b in v} for k, v in supporting.items()}
+    supported_by = {k: {b for b in v} for k, v in supported_by.items()}
+
+    to_destroy = [brick]
+    destroyed = set()
+
+    while len(to_destroy) > 0:
+        brick, to_destroy = to_destroy[0], to_destroy[1:]
+
+        if brick in destroyed:
+            continue
+
+        destroyed.add(brick)
+
+        if brick in supporting:
+            for b in supporting[brick]:
+                supported_by[b].remove(brick)
+                if len(supported_by[b]) == 0:
+                    to_destroy.append(b)
+
+    return len(destroyed) - 1
+
+
+res = 0
+for brick in bricks:
+    res += get_destroyed(supporting, supported_by, node_name(brick))
+
+print(res)
+
 
 
 
