@@ -71,71 +71,38 @@ def get_nexts(matrix, i, j):
     return res
 
 
-
-res = get_nexts(matrix, 19, 19)
-
-print(res)
-
-
-1/0
-
-
-edges = defaultdict(lambda: list())
+edges = defaultdict(lambda: set())
 nodes = set()
+distances = defaultdict(lambda: dict())
+to_explore = [start]
 
-nodes.add(node_name(start))
-paths_to_do = [start]
-explored = set()
+while len(to_explore) > 0:
+    current = to_explore.pop(0)
 
-# The input is happily well formed!
-while len(paths_to_do) > 0:
-    print("==========================================")
-    print(edges)
-    print(paths_to_do)
+    # TODO: probably incorrect actually, need to check if other paths
+    if current in nodes:
+        continue
 
-    path_start = paths_to_do.pop(0)
-    current = path_start
-    d = 0
+    nodes.add(current)
 
-    explored.add(start)
+    for dest, d in get_nexts(matrix, *current):
+        distances[node_name(current)][node_name(dest)] = d
+        edges[node_name(current)].add(node_name(dest))
 
-    print("PATH START", path_start)
+        if dest != end:
+            to_explore.append(dest)
 
+nodes.add(end)
 
-    while True:
-        i, j = current
+print(nodes)
 
-        s = sum(1 if matrix[ni][nj] in ['.', authorized_slopes[(ni-i, nj-j)]] and (ni, nj) not in explored else 0 for ni, nj, v in u.ortho_neighbours_iterator(matrix, i, j))
-
-        if s == 1:
-            nic, njc = None, None
-            for ni, nj, v in u.ortho_neighbours_iterator(matrix, i, j):
-                if v in ['.', authorized_slopes[(ni-i, nj-j)]] and (ni, nj) not in explored:
-                    nic, njc = ni, nj
-
-            d += 1
-            explored.add(current)
-            current = (nic, njc)
-            continue
-
-        else:  # Reached an intersection
-            for ni, nj, v in u.ortho_neighbours_iterator(matrix, i, j):
-                if v != '#' and (ni, nj) not in explored and v == authorized_slopes[(ni-i, nj-j)]:
-                    edges[node_name(path_start)].append((node_name((ni, nj)), d+1))
-                    paths_to_do.append((ni, nj))
-                    explored.add(current)
-
-            break
-
-print("=====================================")
-print("=====================================")
-
-for s, e in edges.items():
-    print("======================================")
-    print(s)
-    for __e in e:
-        print(__e)
+for beg, dests in edges.items():
+    print("=========", beg)
+    print(dests)
 
 
+L = u.topological_sort(nodes, edges)
+
+print(L)
 
 
