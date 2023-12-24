@@ -79,7 +79,6 @@ to_explore = [start]
 while len(to_explore) > 0:
     current = to_explore.pop(0)
 
-    # TODO: probably incorrect actually, need to check if other paths
     if current in nodes:
         continue
 
@@ -93,16 +92,17 @@ while len(to_explore) > 0:
             to_explore.append(dest)
 
 nodes.add(end)
-
-print(nodes)
-
-for beg, dests in edges.items():
-    print("=========", beg)
-    print(dests)
-
+nodes = { node_name(node) for node in nodes }
 
 L = u.topological_sort(nodes, edges)
 
-print(L)
+max_distances = defaultdict(lambda: -1)
+max_distances[node_name(start)] = 0
+
+for node in L:
+    for __next in edges[node]:
+        max_distances[__next] = max(max_distances[__next], max_distances[node] + distances[node][__next])
+
+print(max_distances[node_name(end)])
 
 

@@ -216,6 +216,7 @@ def lcm(a, b):
 
 # nodes set ; edges dict of start, set of ends
 # https://en.wikipedia.org/wiki/Topological_sorting
+# TODO: maybe clone edges to avoid modifying in place
 def topological_sort(nodes, edges):
     incoming_edges = defaultdict(lambda: set())
 
