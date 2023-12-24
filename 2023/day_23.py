@@ -35,6 +35,51 @@ authorized_slopes = {
     (0, -1): '<',
 }
 
+# This assumes no incompatible slopes along any path
+def get_next(matrix, i, j, explored):
+    d = 0
+
+    while True:
+        if (i, j) == end:
+            break
+
+        s = sum(1 if v != '#' and (ni, nj) not in explored else 0 for ni, nj, v in u.ortho_neighbours_iterator(matrix, i, j))
+
+        if s != 1:
+            break
+
+        nic, njc = None, None
+        for ni, nj, v in u.ortho_neighbours_iterator(matrix, i, j):
+            if v in ['.', authorized_slopes[(ni-i, nj-j)]] and (ni, nj) not in explored:
+                nic, njc = ni, nj
+
+        explored.add((i, j))
+        i, j = nic, njc
+        d += 1
+
+    return ((i, j), d)
+
+
+def get_nexts(matrix, i, j):
+    res = []
+
+    for ni, nj, v in u.ortho_neighbours_iterator(matrix, i, j):
+        if v in ['.', authorized_slopes[(ni-i, nj-j)]]:
+            dest, d = get_next(matrix, ni, nj, { (i, j) })
+            res.append((dest, d+1))
+
+    return res
+
+
+
+res = get_nexts(matrix, 19, 19)
+
+print(res)
+
+
+1/0
+
+
 edges = defaultdict(lambda: list())
 nodes = set()
 
