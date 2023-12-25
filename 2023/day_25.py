@@ -5,7 +5,6 @@ from collections import defaultdict
 import math
 import itertools
 import numpy as np
-import random
 
 is_example = (len(sys.argv) > 1)
 fn = 'inputs/' + __file__.replace('.py', '') + ('.example' if is_example else '') + '.data'
@@ -15,51 +14,10 @@ with open(fn) as file:
     lines = [line.rstrip() for line in file]
 
 
-
-
-# Shamelessly taken from https://stackoverflow.com/questions/15993447/python-data-structure-for-efficient-add-remove-and-random-choice
-class ListDict(object):
-    def __init__(self):
-        self.item_to_position = {}
-        self.items = []
-
-    def __contains__(self, item):
-        return item in self.item_to_position
-
-    def __iter__(self):
-        return iter(self.items)
-
-    def __len__(self):
-        return len(self.items)
-
-    def __str__(self):
-        return "LISTDICT => " + ', '.join(map(str, self.items))
-
-    def add_item(self, item):
-        if item in self.item_to_position:
-            return
-        self.items.append(item)
-        self.item_to_position[item] = len(self.items)-1
-
-    def remove_item(self, item):
-        position = self.item_to_position.pop(item)
-        last_item = self.items.pop()
-        if position != len(self.items):
-            self.items[position] = last_item
-            self.item_to_position[last_item] = position
-
-    def choose_random_item(self):
-        return random.choice(self.items)
-
-
-
-
-
-
 # PART 1
 def parse_input():
     nodes = set()
-    edges = ListDict()
+    edges = u.ListDict()
 
     for l in lines:
         a, bs = l.split(': ')
