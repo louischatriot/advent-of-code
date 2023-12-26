@@ -77,6 +77,9 @@ def find_one_cut():
         return find_one_cut()
 
 
+# This is actually quite less efficient than I expected, most likely because there is only one solution
+# while randomized algorithms like when there are a lot of solutions (e.g. N queen problem) or when you don't care about
+# the absolute best answer ; should have gone with a min cut algorithm
 res = find_one_cut()
 print(res)
 
