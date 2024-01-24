@@ -228,11 +228,12 @@ def topological_sort(nodes, edges):
     return L
 
 
-
-
-
-
-
-
-
+def fast_modular_exp(b, exp, m):
+    res = 1
+    while exp > 1:
+        if exp & 1:
+            res = (res * b) % m
+        b = b ** 2 % m
+        exp >>= 1
+    return (b * res) % m
 

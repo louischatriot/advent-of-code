@@ -85,28 +85,40 @@ res = (a * pos + b) % S
 print(res)
 
 
-
-
-
-sys.exit(0)
-
-
 # PART 2
 S = 119315717514047
 shuffles = 101741582076661
 
+shuffles = 1999  # A small prime
+
+a, b = get_coeffs(actions, S)
+print(a, b)
+
+A = u.fast_modular_exp(a, shuffles, S)
+B = (u.fast_modular_exp(a, shuffles, S) - 1) % S
+B *= u.fast_modular_exp(a-1, S-2, S)
+B = (b * B) % S
+
 
 pos = 2020
-n_shuffles = 0
-while True:
+
+res = (A * pos + B) % S
+print('RESULT', res)
+
+
+# CHECK
+pos = 2020
+for _ in range(0, shuffles):
     pos = pos_after_shuffle(pos, S)
-    n_shuffles += 1
-    print(pos)
 
-    if pos == 2020:
+print('CHECK', pos)
+
+
+while True:
+    # print(res)
+    res = (A * res + B) % S
+    if res == 2020:
         break
-
-
 
 
 
