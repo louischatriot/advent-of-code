@@ -205,7 +205,6 @@ def do_dijkstra(nodes, edges, start_node, end_node):
 
 
 def pairwise(iterable):
-    "s -> (s0,s1), (s1,s2), (s2, s3), ..."
     a, b = itertools.tee(iterable)
     next(b, None)
     return zip(a, b)
