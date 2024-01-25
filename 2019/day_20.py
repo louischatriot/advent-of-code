@@ -23,8 +23,6 @@ def add_portal(portals, name, i, j):
 
     portals[key] = (i, j)
 
-
-
 left = re.compile('[A-Z]{2}\.')
 right = re.compile('\.[A-Z]{2}')
 
@@ -54,7 +52,20 @@ for i, __l in enumerate(matrix):
     for m in right.finditer(l):
         add_portal(portals, m.group()[1:], m.start(), i)
 
+matrix = [[c for c in l] for l in lines]
 
+coord_to_portal = dict()
+for k, v in portals.items():
+    coord_to_portal[v] = k
+
+
+def next_portals(portals, matrix, start):
+    i, j = portals[start]
+
+    todo = [(i, j, 0)]
+    done = set()
+
+    while len(todo) > 0:
 
 
 
