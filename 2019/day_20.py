@@ -35,6 +35,26 @@ for i, l in enumerate(lines):
     for m in right.finditer(l):
         add_portal(portals, m.group()[1:], i, m.start())
 
-print(portals)
+matrix = [[c for c in l] for l in lines]
+
+# Padding
+J = max(len(l) for l in matrix)
+for l in matrix:
+    for _ in range(len(l), J):
+        l.append(' ')
+
+matrix = [[matrix[i][j] for i in range(len(matrix))] for j in range(J)]
+
+for i, __l in enumerate(matrix):
+    l = ''.join(__l)
+
+    for m in left.finditer(l):
+        add_portal(portals, m.group()[0:2], m.start() + 2, i)
+
+    for m in right.finditer(l):
+        add_portal(portals, m.group()[1:], m.start(), i)
+
+
+
 
 
