@@ -19,9 +19,19 @@ computer = Computer(program)
 
 # PART 1
 instructions = [
-    'NOT A J\n',
-    'WALK\n'
+    'NOT A J',
+    'NOT B T',
+    'OR T J',
+    'NOT C T',
+    'OR T J',
+    'NOT D T',
+    'NOT T T',
+    'AND T J',
+    'WALK'
 ]
+
+
+instructions = [inst + '\n' for inst in instructions]
 
 # Intcode code is really dirty and I should refactor it but oh well
 
@@ -40,9 +50,13 @@ for inst in instructions:
 
 while True:
     v = computer.run_until_output()
-    print(chr(v), end='')
+    if v > 1000:
+        print(v)
+    else:
+        print(chr(v), end='')
 
 
+# PART 2
 
 
 
