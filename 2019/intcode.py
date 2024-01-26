@@ -86,6 +86,12 @@ class Computer:
                 # print("RAN UTIL IO", opcode[3:])
                 return opcode
 
+    def is_io_opcode_input(self, opcode):
+        if opcode[3:] not in ['03', '04']:
+            raise ValueError("opcode is not an io opcode")
+
+        return opcode[3:] == '03'
+
 
     def run_until_input(self, the_input):
         opcode = self.run_until_io()

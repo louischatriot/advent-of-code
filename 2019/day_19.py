@@ -16,17 +16,6 @@ from intcode import Computer
 
 
 # PART 2
-if is_example:
-    # Using cached answer!
-    matrix = [l.split() for l in lines]
-
-    for l in matrix:
-        v = sum(1 if c == '#' else 0 for c in l)
-
-        print(' '.join(l) + '   ' + str(v))
-
-    sys.exit(0)
-
 def run_once(x, y):
     program = [int(n) for n in lines[0].split(',')]
     computer = Computer(program)
