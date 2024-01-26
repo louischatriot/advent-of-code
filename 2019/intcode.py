@@ -83,6 +83,7 @@ class Computer:
 
             # Input (3) / output (8)
             if opcode[3:] in ['03', '04']:
+                # print("RAN UTIL IO", opcode[3:])
                 return opcode
 
 
