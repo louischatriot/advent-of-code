@@ -19,6 +19,7 @@ weights = list(int(l) for l in lines)
 total = sum(weights)
 per_bag = total // 3
 
+""" Way too slow!
 def all_subsets(weights, S):
     res = []
 
@@ -42,14 +43,15 @@ def all_subsets(weights, S):
             res.append(subset.union({weight}))
 
     return res
+"""
+
 
 
 print(weights, per_bag)
 
 
-mem = [[None for _ in range(len(weights))] for _ in range(per_bag+1)]
 
-def is_possible(weights, mem, S, w):
+def is_possible_internal(weights, mem, S, w):
     if mem[S][w] is not None:
         return mem[S][w]
 
@@ -63,38 +65,45 @@ def is_possible(weights, mem, S, w):
         return res
 
     # To avoid lazy evaluation
-    res = is_possible(weights, mem, S, w-1)
+    res = is_possible_internal(weights, mem, S, w-1)
 
     if S - weights[w] >= 0:
-        res = is_possible(weights, mem, S - weights[w], w-1) or res
+        res = is_possible_internal(weights, mem, S - weights[w], w-1) or res
 
     mem[S][w] = res
     return res
 
 
-res = is_possible(weights, mem, per_bag, len(weights)-1)
-print(res)
+def is_possible(weights, S):
+    mem = [[None for _ in range(len(weights))] for _ in range(S+1)]
+    res = is_possible_internal(weights, mem, S, len(weights)-1)
+    return res
 
-for l in mem:
-    print(['TRUE' if c else '----' for c in l])
 
+def all_possibilities(weights, S, MAX_L=None):
+    if MAX_L is None:
+        MAX_L = len(weights)
 
-def all_possibilities(weights, mem, S, w):
-    todo = [(set(), S, w)]
+    # Populate graph
+    mem = [[None for _ in range(len(weights))] for _ in range(S+1)]
+    is_possible_internal(weights, mem, per_bag, len(weights)-1)
+
+    todo = [(set(), S, len(weights)-1)]
     done = []
 
     while len(todo) > 0:
         base, S, w = todo.pop(0)
 
         if S == 0:
-            print(base)
             done.append(base)
             continue
 
         if w == 0:
             if weights[0] == S:
-                print(base)
                 done.append(base.union({S}))
+            continue
+
+        if len(base) >= MAX_L:
             continue
 
         if mem[S][w-1] is True:
@@ -107,9 +116,10 @@ def all_possibilities(weights, mem, S, w):
     return done
 
 
-res = all_possibilities(weights, mem, per_bag, len(weights)-1)
+res = all_possibilities(weights, per_bag, 6)
 
 print(len(res))
+print(res)
 
 
 """
