@@ -44,20 +44,7 @@ def all_subsets(weights, S):
     return res
 
 
-weights = [1, 2, 3, 5, 6, 8, 10]
-per_bag = 10
-
-
 print(weights, per_bag)
-
-res = all_subsets(weights, per_bag)
-
-print(len(res))
-print(res)
-
-
-
-
 
 
 mem = [[None for _ in range(len(weights))] for _ in range(per_bag+1)]
@@ -77,7 +64,10 @@ def is_possible(weights, mem, S, w):
 
     # To avoid lazy evaluation
     res = is_possible(weights, mem, S, w-1)
-    res = is_possible(weights, mem, S - weights[w], w-1) or res
+
+    if S - weights[w] >= 0:
+        res = is_possible(weights, mem, S - weights[w], w-1) or res
+
     mem[S][w] = res
     return res
 
@@ -97,11 +87,13 @@ def all_possibilities(weights, mem, S, w):
         base, S, w = todo.pop(0)
 
         if S == 0:
+            print(base)
             done.append(base)
             continue
 
         if w == 0:
             if weights[0] == S:
+                print(base)
                 done.append(base.union({S}))
             continue
 
@@ -117,7 +109,7 @@ def all_possibilities(weights, mem, S, w):
 
 res = all_possibilities(weights, mem, per_bag, len(weights)-1)
 
-print(res)
+print(len(res))
 
 
 """
