@@ -45,12 +45,6 @@ def all_subsets(weights, S):
     return res
 """
 
-
-
-print(weights, per_bag)
-
-
-
 def is_possible_internal(weights, mem, S, w):
     if mem[S][w] is not None:
         return mem[S][w]
@@ -116,51 +110,19 @@ def all_possibilities(weights, S, MAX_L=None):
     return done
 
 
-res = all_possibilities(weights, per_bag, 6)
+weights_set = set(weights)
 
-print(len(res))
-print(res)
+min_qe = 99999999999
 
+for pos in all_possibilities(weights, per_bag, 6):
+    new_weights = list(weights_set.difference(pos))
+    if not is_possible(new_weights, per_bag):
+        continue
 
-"""
-res = is_possible(weights, mem, per_bag, 3)
-print(res)
-
-for l in mem:
-    print(['TRUE' if c else '----' for c in l])
-"""
+    min_qe = min(min_qe, math.prod(pos))
 
 
-
-
-sys.exit(0)
-
-
-possibilities = [[None for _ in range(len(weights))] for _ in range(per_bag+1)]
-
-possibilities[weights[0]][0] = True
-
-for weight_max in range(len(weights)-1):
-    for S in range(1, per_bag+1):
-        if possibilities[S][weight_max]:
-            possibilities[S][weight_max + 1] = True
-
-            new_S = S + weights[weight_max + 1] 
-            if new_S <= per_bag:
-                possibilities[new_S][weight_max + 1] = True
-
-print(possibilities[per_bag][-1])
-
-
-for l in possibilities:
-    print(['TRUE' if c else '----' for c in l])
-
-
-
-
-
-
-
+print(min_qe)
 
 
 
