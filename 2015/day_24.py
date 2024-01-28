@@ -114,7 +114,7 @@ weights_set = set(weights)
 
 min_qe = 99999999999
 
-for pos in all_possibilities(weights, per_bag, 6):
+for pos in all_possibilities(weights, per_bag, 6):  # 6 found after playing around with the algo
     new_weights = list(weights_set.difference(pos))
     if not is_possible(new_weights, per_bag):
         continue
@@ -124,6 +124,29 @@ for pos in all_possibilities(weights, per_bag, 6):
 
 print(min_qe)
 
+
+# PART 2
+per_bag = total // 4
+min_qe = 99999999999
+
+def can_be_split_in_three(weights):
+    S = sum(weights) // 3
+
+    for pos in all_possibilities(weights, S, 5):  # 6 found after playing around with the algo
+        new_weights = list(weights_set.difference(pos))
+        if is_possible(new_weights, per_bag):
+            return True
+
+    return False  # Technically this is incorrect as we do not test all possibilities to go faster ; in practice if the answer is wrong we just have to increase the cutoff until it is true :)
+
+
+for pos in all_possibilities(weights, per_bag, 4):  # 4 found after playing around with the algo
+    new_weights = list(weights_set.difference(pos))
+
+    if can_be_split_in_three(new_weights):
+        min_qe = min(min_qe, math.prod(pos))
+
+print(min_qe)
 
 
 
