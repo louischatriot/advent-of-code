@@ -3,6 +3,7 @@ import heapq
 import re
 from collections import defaultdict
 import math
+import numpy
 
 # Regexes
 all_lowercase = re.compile('^[a-z]+$')
@@ -236,4 +237,45 @@ def fast_modular_exp(b, exp, m):
         b = b ** 2 % m
         exp >>= 1
     return (b * res) % m
+
+
+def primes_until_n(n):
+    n += 1
+    sieve = numpy.ones(n//2, dtype=bool)
+    for i in range(3,int(n**0.5)+1,2):
+        if sieve[i//2]:
+            sieve[i*i//2::i] = False
+    return [2] + list(2*numpy.nonzero(sieve)[0][1::]+1)
+
+
+def get_prime_factors(n, primes = None):
+    if primes is None:
+        primes = primes_until_n(math.floor(math.sqrt(n)) + 1)
+
+    res = []
+
+    for p in primes:
+        if p > n:
+            break
+
+        while n % p == 0:
+            res.append(p)
+            n = n // p
+
+    return res
+
+
+def sum_of_divisors(n, primes = None):
+    prime_factors = get_prime_factors(n, primes)
+
+    res = set()
+
+    for L in range(len(prime_factors) + 1):
+        for subset in itertools.combinations(prime_factors, L):
+            res.add(math.prod(subset))
+
+    return sum(res)
+
+
+
 
