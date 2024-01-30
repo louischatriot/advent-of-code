@@ -265,6 +265,8 @@ def get_prime_factors(n, primes = None):
     return res
 
 
+# Would be much more efficient to use a Erathostène's sieve like approach to calculate many of those sums
+# See 2015 day 20
 def sum_of_divisors(n, primes = None):
     prime_factors = get_prime_factors(n, primes)
 
