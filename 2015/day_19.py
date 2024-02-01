@@ -24,15 +24,58 @@ for k, v in __rules:
 molecule_parser = re.compile('[A-Z][a-z]?')
 molecule = [m.group() for m in molecule_parser.finditer(__molecule)]
 
-pos = set()
+def one_step(molecule):
+    pos = set()
+    for i, atom in enumerate(molecule):
+        for new_atom in rules[atom]:
+            new_one = [a for a in molecule]
+            new_one[i] = new_atom
+            pos.add(''.join(new_one))
 
-for i, atom in enumerate(molecule):
-    for new_atom in rules[atom]:
-        new_one = [a for a in molecule]
-        new_one[i] = new_atom
-        pos.add(''.join(new_one))
+    return pos
 
-print(len(pos))
+print(len(one_step(molecule)))
+
+
+# PART 2
+pos = {'e'}
+target_molecule = ''.join(molecule)
+reductions = [(v, re.compile(v), k) for k, v in __rules]
+
+todo = [(target_molecule, 0)]
+
+
+molecule, steps = todo.pop(0)
+
+for expanded, expanded_regex, reduced in reductions:
+    for m in expanded_regex.finditer(molecule):
+        print(expanded)
+        s, e = m.span()
+        new_molecule = molecule[0:s] + reduced + molecule[e:]
+        if new_molecule == 'e':
+            print(steps+1)
+            sys.exit(0)
+
+        todo.append((new_molecule, steps+1))
+
+
+
+
+"""
+# Brute force approach too slow
+step = 0
+while True:
+    step += 1
+    new_pos = set()
+    for mol in pos:
+        new_pos = new_pos.union(one_step(mol))
+
+    if target_molecule in new_pos:
+        print(step)
+        break
+
+    pos = new_pos
+"""
 
 
 
