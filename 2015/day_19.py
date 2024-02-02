@@ -38,31 +38,57 @@ print(len(one_step(molecule)))
 
 
 # PART 2
-pos = {'e'}
 target_molecule = ''.join(molecule)
-reductions = [(v, re.compile(v), k) for k, v in __rules]
 
-todo = [(target_molecule, 0)]
+# Greedy approach to search & backtracking
+rules = sorted(__rules, key=lambda t: -len(t[1]))
 
+def search(molecule, steps):
+    if molecule == 'e':
+        return steps
 
-molecule, steps = todo.pop(0)
+    for a, b in rules:
+        cnt = molecule.count(b)
+        if cnt > 0:
+            res = search(molecule.replace(b, a), steps + cnt)  # Wow
+            if res is not None:
+                return res
 
-for expanded, expanded_regex, reduced in reductions:
-    for m in expanded_regex.finditer(molecule):
-        print(expanded)
-        s, e = m.span()
-        new_molecule = molecule[0:s] + reduced + molecule[e:]
-        if new_molecule == 'e':
-            print(steps+1)
-            sys.exit(0)
+    return None
 
-        todo.append((new_molecule, steps+1))
+# Surprisingly, this very coarse approach works and is really fast
+# There should be inputs where this does not work but the general case is exponential ...
+res = search(target_molecule, 0)
+print(res)
+
 
 
 
 
 """
+# Another brute force, by reducing, also does not work
+reductions = [(v, re.compile(v), k) for k, v in __rules]
+todo = [(target_molecule, 0)]
+
+while True:
+    molecule, steps = todo.pop(0)
+
+    for expanded, expanded_regex, reduced in reductions:
+        for m in expanded_regex.finditer(molecule):
+            print(expanded)
+            s, e = m.span()
+            new_molecule = molecule[0:s] + reduced + molecule[e:]
+            if new_molecule == 'e':
+                print(steps+1)
+                sys.exit(0)
+
+            todo.append((new_molecule, steps+1))
+"""
+
+
+"""
 # Brute force approach too slow
+pos = {'e'}
 step = 0
 while True:
     step += 1
