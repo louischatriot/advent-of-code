@@ -58,6 +58,7 @@ def search(molecule, steps):
 
 # Surprisingly, this very coarse approach works and is really fast
 # There should be inputs where this does not work but the general case is exponential ...
+# The correct approach would be a parser (LL(1) or otherwise) but since greedy works I'll take my stars and leave
 res = search(target_molecule, 0)
 print(res)
 

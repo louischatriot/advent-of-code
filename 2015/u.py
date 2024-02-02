@@ -27,6 +27,14 @@ def ortho_neighbours_iterator(data, i, j):
             yield (i+di, j+dj, data[i+di][j+dj])
 
 
+def neighbours_not_center_iterator(data, i, j):
+    I, J = len(data), len(data[0])
+
+    for di, dj in all_neighbours:
+        if 0 <= i+di < I and 0 <= j+dj < J:
+            yield (i+di, j+dj, data[i+di][j+dj])
+
+
 def get_pos(arr, i, j, di, dj, default):
     if not (0 <= i + di < len(arr)):
         return default
