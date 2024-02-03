@@ -287,5 +287,10 @@ def sum_of_divisors(n, primes = None):
     return sum(res)
 
 
+def pairwise(iterable):
+    a, b = itertools.tee(iterable)
+    next(b, None)
+    return zip(a, b)
+
 
 
