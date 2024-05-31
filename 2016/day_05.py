@@ -20,22 +20,22 @@ import hashlib
 res = 1
 password = ''
 
-# while True:
-    # h = hashlib.new('md5')
-    # contents = lines[0] + str(res)
-    # contents = bytes(contents, 'ascii')
-    # h.update(bytes(lines[0] + str(res), 'ascii'))
-    # t = h.hexdigest()
+while True:
+    h = hashlib.new('md5')
+    contents = lines[0] + str(res)
+    contents = bytes(contents, 'ascii')
+    h.update(bytes(lines[0] + str(res), 'ascii'))
+    t = h.hexdigest()
 
-    # if t[0:5] == '00000':
-        # password += t[5]
-        # print(password)   # Keeping this it's fun to see it "crack"
-        # if len(password) == 8:
-            # break
+    if t[0:5] == '00000':
+        password += t[5]
+        print(password)   # Keeping this it's fun to see it "crack"
+        if len(password) == 8:
+            break
 
-    # res += 1
+    res += 1
 
-# print("PASSWORD FOUND", password)
+print("PASSWORD FOUND", password)
 
 
 # PART 2
