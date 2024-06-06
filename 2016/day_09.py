@@ -43,10 +43,6 @@ print(len(res))
 
 # PART 2
 def length(s):
-
-    # print(s)
-    # print("====================")
-
     res = 0
     pattern = None
 
@@ -65,18 +61,10 @@ def length(s):
             else:
                 pattern += c
 
-    # print(res)
-    # print(pattern)
-    # print(to_reapeat)
-    # print(s)
-
     if pattern is None:
         return res
     else:
         return res + repeat * length(to_reapeat) + length(s)
-
-
-
 
 res = length(lines[0])
 print(res)
