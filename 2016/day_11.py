@@ -22,7 +22,7 @@ if is_example:
     start_state = { 'E': 1, 1: {'HM', 'LM'}, 2: {'HG'}, 3: {'LG'}, 4: set() }
     end_state = { 'E': 4, 1: set(), 2: set(), 3: set(), 4: {'HM', 'LM', 'HG', 'LG'} }
 else:
-    PART_2 = True
+    PART_2 = False
 
     start_state = { 'E': 1, 1: {'PG', 'TG', 'TM', 'MG', 'RG', 'RM', 'CG', 'CM'}, 2: {'PM', 'MM'}, 3: set(), 4: set() }
     end_state = { 'E': 4, 1: set(), 2: set(), 3: set(), 4: {'PG', 'TG', 'TM', 'MG', 'RG', 'RM', 'CG', 'CM', 'PM', 'MM'} }
@@ -72,6 +72,7 @@ def h(node):
 
 
 # Below is a really ugly A star, I really need to fix my string based implementation of PQ
+# Using better data types would probably make it much faster
 end_name = to_node_name(end_state)
 targets = [None, [2], [1, 3], [2, 4], [3]]
 

@@ -4,6 +4,7 @@ import re
 from collections import defaultdict
 import math
 import numpy
+import hashlib
 
 # Regexes
 all_lowercase = re.compile('^[a-z]+$')
@@ -292,5 +293,11 @@ def pairwise(iterable):
     next(b, None)
     return zip(a, b)
 
+
+def generate_md5(contents):
+    h = hashlib.new('md5')
+    contents = bytes(contents, 'ascii')
+    h.update(contents)
+    return h.hexdigest()
 
 
