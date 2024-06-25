@@ -15,7 +15,6 @@ with open(fn) as file:
 
 
 # PART 1 & 2
-import copy
 import time
 
 if is_example:
