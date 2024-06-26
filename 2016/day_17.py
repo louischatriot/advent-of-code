@@ -37,17 +37,8 @@ while True:
         sys.exit(0)
 
     hash = u.generate_md5(passcode + path)
-    print(hash)
 
-    for dx, dy, c in zip([-1, 1, 0, 0], [0, 0, -1, 1], hash[0:4]):
-        print(dx, dy, c)
-
-
-
-
-
-
-    1/0
-
-
+    for dx, dy, dir, c in zip([-1, 1, 0, 0], [0, 0, -1, 1], ['U', 'D', 'L', 'R'], hash[0:4]):
+        if 0 <= x + dx <= N and 0 <= y + dy <= N and 'b' <= c <= 'f':
+            to_visit.add_task(f"{path}{dir}|{x+dx}-{y+dy}", len(path) + 1 + h(x+dx, y+dy))
 
