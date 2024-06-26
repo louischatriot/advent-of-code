@@ -163,6 +163,9 @@ class PriorityQueue:
 
         return None, None
 
+    def length(self):
+        return len(self.pq)
+
 
 # TODO: implement using best_predecessors to also give the path itself
 def do_dijkstra(nodes, edges, start_node, end_node):
