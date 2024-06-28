@@ -16,6 +16,8 @@ def split_at_char(s, n):
 
 hex_to_binary = {'0': '0000', '1': '0001', '2': '0010', '3': '0011', '4': '0100', '5': '0101', '6': '0110', '7': '0111', '8': '1000', '9': '1001', 'A': '1010', 'B': '1011', 'C': '1100', 'D': '1101', 'E': '1110', 'F': '1111' }
 
+letters = [chr(i) for i in range(97, 123)]
+
 ortho_neighbours = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 all_neighbours = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 all_neighbours_and_center = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 0), (0, 1), (1, -1), (1, 0), (1, 1)]
@@ -302,5 +304,28 @@ def generate_md5(contents):
     contents = bytes(contents, 'ascii')
     h.update(contents)
     return h.hexdigest()
+
+
+class DoubleLinkedList:
+    def __init__(self, value):
+        self.value = value
+        self.next = self
+        self.prev = self
+
+    def __str__(self):
+        return f"<DLL> {self.value} ; previous {self.prev.value} ; next {self.next.value}"
+
+    def add_after(self, dll):
+        self.prev = dll
+        dll.next = self
+
+    def remove(self):
+        self.prev.next = self.next
+        self.next.prev = self.prev
+
+
+
+
+
 
 
