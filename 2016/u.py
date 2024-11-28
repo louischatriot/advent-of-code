@@ -325,6 +325,100 @@ class DoubleLinkedList:
 
 
 
+def bfs_matrix_until_non_empty(matrix, i, j, wall='#', empty='.'):
+    N, M = len(matrix), len(matrix[0])
+
+    to_explore=[((i, j), 0)]
+    res = list()
+    explored = set()
+    explored.add((i, j))
+
+    while len(to_explore) > 0:
+        coords, distance = to_explore.pop()
+        i0, j0 = coords
+
+        for i, j, v in ortho_neighbours_iterator(matrix, i0, j0):
+            if (i, j) in explored or v == wall:
+                continue
+
+            if v == empty:
+                to_explore.append(((i, j), distance+1))
+            else:
+                res.append(((i, j), distance+1))
+
+        explored.add((i0, j0))
+
+    return res
+
+
+class Graph:
+    def __init__(self):
+        self.nodes = list()
+        self.edges = dict()
+
+    def add_node(self, node):
+        # O(n) but not an issue for the small AoC graphs
+        if node not in self.nodes:
+            self.nodes.append(node)
+            self.edges[node] = list()
+
+    def add_undirected_edge(self, a, b, distance):
+        self.add_node(a)
+        self.add_node(b)
+
+        # O(n) also but oh well
+        for n, _ in self.edges[a]:
+            if n == b:
+                raise ValueError("Trying to add the same edge twice")
+
+        for n, _ in self.edges[b]:
+            if n == a:
+                raise ValueError("Trying to add the same edge twice")
+
+        self.edges[a].append((b, distance))
+        self.edges[b].append((a, distance))
+
+    def add_directed_node(self, a, b, distance):
+        self.add_node(a)
+        self.add_node(b)
+
+        for n, _ in self.edges[a]:
+            if n == b:
+                raise ValueError("Trying to add the same edge twice")
+
+        self.edges[a].append((b, distance))
+            
+    def create_from_matrix(self, matrix, start, wall='#', empty='.'):
+        i, j = -1, -1
+        nodes = list()
+        for ix, jx in itertools.product(range(len(matrix)), range(len(matrix[0]))):
+            if matrix[ix][jx] == start:
+                i, j = ix, jx
+            
+            if matrix[ix][jx] not in [wall, empty]:
+                nodes.append((ix, jx, matrix[ix][jx]))
+
+
+        for ia, ja, a in nodes:
+            for coords, distance in bfs_matrix_until_non_empty(matrix, ia, ja, wall, empty):
+                ib, jb = coords
+                b = matrix[ib][jb]
+
+                self.add_directed_node(a, b, distance)
+
+    def print(self):
+        print(f"NODES: {', '.join(self.nodes)}")
+        for n in self.nodes:
+            print(f"-- {n} => {', '.join([m + ' (' + str(d) + ')' for m, d in self.edges[n]])}")
+
+
+
+
+
+
+
+
+
 
 
 
