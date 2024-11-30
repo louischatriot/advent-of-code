@@ -1,9 +1,10 @@
 registers = ['a', 'b', 'c', 'd']
 
 class Assembunny:
-    def __init__(self, program):
+    def __init__(self, program, out = None):
         self.program = [l for l in program]
         self.memory = { reg: 0 for reg in registers }
+        self.out = out
         self.inst_pointer = 0
 
     def get_value(self, x):
@@ -19,8 +20,6 @@ class Assembunny:
 
             inst = self.program[self.inst_pointer]
             inst, operands = inst[0:3], inst[4:]
-
-            # print(self.inst_pointer, self.program, self.memory)
 
             if inst == 'inc':
                 self.memory[operands] += 1
@@ -45,6 +44,16 @@ class Assembunny:
                     self.inst_pointer += y
                 else:
                     self.inst_pointer += 1
+
+            elif inst == 'out':
+                v = self.memory[operands]
+                if self.out is None:
+                    print(v)
+                else:
+                    self.out.append(v)
+                    if len(self.out) >= 15:
+                        break
+                self.inst_pointer += 1
 
             elif inst == 'tgl':
                 x = operands
