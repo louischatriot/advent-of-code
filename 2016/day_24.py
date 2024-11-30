@@ -15,11 +15,23 @@ with open(fn) as file:
 
 
 # PART 1
-for l in lines:
-    print(l)
+if is_example:
+    for l in lines:
+        print(l)
 
 g = u.Graph()
-g.create_from_matrix(lines, '0')
+g.create_from_matrix(lines)
 g.print()
+res, _ = g.get_shortest_path_covering_all_nodes('0')
+print(res)
+
+
+# PART 2
+g = u.Graph()
+g.create_from_matrix(lines, full=True)
+g.print()
+res = g.tsp('0', True)
+print(res)
+
 
 

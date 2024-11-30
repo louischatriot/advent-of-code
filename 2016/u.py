@@ -6,6 +6,8 @@ import math
 import numpy
 import hashlib
 
+VERY_BIG = 9999999999
+
 # Regexes
 all_lowercase = re.compile('^[a-z]+$')
 
@@ -325,17 +327,19 @@ class DoubleLinkedList:
 
 
 
-def bfs_matrix_until_non_empty(matrix, i, j, wall='#', empty='.'):
+def bfs_matrix(matrix, i, j, wall='#', empty='.', stop_at_non_empty=True):
     N, M = len(matrix), len(matrix[0])
 
     to_explore=[((i, j), 0)]
-    res = list()
+    res = defaultdict(lambda: 9999999999)  # Oh oh oh
     explored = set()
-    explored.add((i, j))
 
     while len(to_explore) > 0:
-        coords, distance = to_explore.pop()
+        coords, distance = to_explore.pop(0)
         i0, j0 = coords
+
+        if (i0, j0) in explored:
+            continue
 
         for i, j, v in ortho_neighbours_iterator(matrix, i0, j0):
             if (i, j) in explored or v == wall:
@@ -344,75 +348,135 @@ def bfs_matrix_until_non_empty(matrix, i, j, wall='#', empty='.'):
             if v == empty:
                 to_explore.append(((i, j), distance+1))
             else:
-                res.append(((i, j), distance+1))
+                res[(i, j)] = min(distance+1, res[(i, j)])
+                if not stop_at_non_empty:
+                    to_explore.append(((i, j), distance+1))
 
         explored.add((i0, j0))
 
+    res = [(n, res[n]) for n in res.keys()]
     return res
+
+
 
 
 class Graph:
     def __init__(self):
         self.nodes = list()
-        self.edges = dict()
+        self.edges = defaultdict(lambda: dict())
 
     def add_node(self, node):
         # O(n) but not an issue for the small AoC graphs
         if node not in self.nodes:
             self.nodes.append(node)
-            self.edges[node] = list()
-
-    def add_undirected_edge(self, a, b, distance):
-        self.add_node(a)
-        self.add_node(b)
-
-        # O(n) also but oh well
-        for n, _ in self.edges[a]:
-            if n == b:
-                raise ValueError("Trying to add the same edge twice")
-
-        for n, _ in self.edges[b]:
-            if n == a:
-                raise ValueError("Trying to add the same edge twice")
-
-        self.edges[a].append((b, distance))
-        self.edges[b].append((a, distance))
 
     def add_directed_node(self, a, b, distance):
         self.add_node(a)
         self.add_node(b)
 
-        for n, _ in self.edges[a]:
-            if n == b:
-                raise ValueError("Trying to add the same edge twice")
+        if b in self.edges[a]:
+            raise ValueError("Trying to add the same edge twice")
 
-        self.edges[a].append((b, distance))
-            
-    def create_from_matrix(self, matrix, start, wall='#', empty='.'):
-        i, j = -1, -1
+        self.edges[a][b] = distance
+
+    # Get best paths between two nodes
+    # If full is True we get all best path between two nodes
+    # If full is False only the minimum set of edges i.e. if c is between a and b, no a to b edge
+    def create_from_matrix(self, matrix, wall='#', empty='.', full=False):
         nodes = list()
+
         for ix, jx in itertools.product(range(len(matrix)), range(len(matrix[0]))):
-            if matrix[ix][jx] == start:
-                i, j = ix, jx
-            
             if matrix[ix][jx] not in [wall, empty]:
                 nodes.append((ix, jx, matrix[ix][jx]))
 
-
         for ia, ja, a in nodes:
-            for coords, distance in bfs_matrix_until_non_empty(matrix, ia, ja, wall, empty):
+            for coords, distance in bfs_matrix(matrix, ia, ja, wall, empty, not full):
                 ib, jb = coords
                 b = matrix[ib][jb]
-
                 self.add_directed_node(a, b, distance)
 
+    # Get all best paths between two nodes
+    def create_full_from_matrix(self, matrix, wall='#', empty='.'):
+        pass
+
+
     def print(self):
+        print("=============================================================")
         print(f"NODES: {', '.join(self.nodes)}")
         for n in self.nodes:
-            print(f"-- {n} => {', '.join([m + ' (' + str(d) + ')' for m, d in self.edges[n]])}")
+            print(f"-- {n} => {', '.join([m + ' (' + str(d) + ')' for m, d in self.edges[n].items()])}")
+        print("=============================================================")
 
+    def clone(self):
+        g = Graph()
 
+        for n in self.nodes:
+            g.add_node(n)
+            for m, d in self.edges[n].items():
+                g.add_directed_node(n, m, d)
 
+        return g
+
+    def remove_node(self, node):
+        # My chosen data structure is really not the right one I am ashamed
+        # but too lazy to change and for small graphs performance does not change much
+        prevs = list()
+
+        for m in self.nodes:
+            if m != node:
+                for nn, d in self.edges[m].items():
+                    if nn == node:
+                        prevs.append((m, d))
+
+        for p, dp in prevs:
+            del self.edges[p][node]
+
+            for n, dn in self.edges[node].items():
+                if n != p:  # Assume we don't want to create cycles
+                    if n in self.edges[p]:
+                        self.edges[p][n] = min(self.edges[p][n], dp + dn)
+                    else:
+                        self.edges[p][n] = dp + dn
+
+        self.nodes = [n for n in self.nodes if n != node]
+        del self.edges[node]
+
+    def get_shortest_path_covering_all_nodes(self, start = None):
+        if start is None:
+            start = self.nodes[0]
+
+        if len(self.nodes) == 1:
+            return 0, [start]
+
+        best_d = 999999999  # Uh uh uh
+        best_path = None
+
+        for n, d in self.edges[start].items():
+            g = self.clone()
+            g.remove_node(start)
+            dist, path = g.get_shortest_path_covering_all_nodes(n)
+
+            if dist + d < best_d:
+                best_d = dist + d
+                best_path = [start] + path
+
+        return best_d, best_path
+
+    # Super basic version, less efficient but on small inputs it works
+    def tsp(self, start, return_home = False):
+        res = VERY_BIG
+        for l in itertools.permutations(self.nodes):
+            if l[0] != start:
+                continue
+
+            path = [n for n in l]
+
+            if return_home is True:
+                path.append(start)
+
+            res = min(res, sum([self.edges[a][b] for a, b in pairwise(path)]))
+
+        return res
 
 
 
