@@ -40,4 +40,38 @@ print(res)
 
 
 # PART 2
+print(nodes)
+
+M, N = -1, -1
+
+for n in nodes:
+    coord, _, _, _ = n
+    x, y = coord
+    M, N = max(M, x), max(N, y)
+
+M, N = M+1, N+1
+
+start_grid = [[None for _ in range(M)] for _ in range(N)]
+
+def clone_grid(grid):
+    res = [[None for _ in range(M)] for _ in range(N)]
+    for x, y in itertools.product(range(M), range(N)):
+        res[y][x] = grid[y][x]
+    return res
+
+for n in nodes:
+    coord, tot, used, _ = n
+    x, y = coord
+    start_grid[y][x] = (tot, used)
+
+start_state = [(M-1, 0), start_grid]
+
+
+
+
+
+
+
+
+
 
