@@ -1,11 +1,13 @@
 registers = ['a', 'b', 'c', 'd']
 
 class Assembunny:
-    def __init__(self, program, out = None):
+    def __init__(self, program, out = None, post_loop_func = None):
         self.program = [l for l in program]
         self.memory = { reg: 0 for reg in registers }
         self.out = out
         self.inst_pointer = 0
+        self.post_loop_func = post_loop_func  # A function to run after each loop
+        self.executed_instructions = 0
 
     def get_value(self, x):
         return self.memory[x] if x in registers else int(x)
@@ -77,11 +79,23 @@ class Assembunny:
 
                 self.inst_pointer += 1
 
+            elif inst == 'fun':  # To speed up day 23 part 2
+                a, b, c, d = self.memory['a'], self.memory['b'], self.memory['c'], self.memory['d']
+                self.memory['a'] = a * b
+                self.memory['b'] = b - 1
+                self.memory['c'] = 2 * (b - 1)
+                self.memory['d'] = 0
 
+                self.inst_pointer += 1
 
 
             else:
                 raise ValueError("Unknown instruction")
+
+            self.executed_instructions += 1
+
+            if self.post_loop_func:
+                self.post_loop_func(self)
 
 
 

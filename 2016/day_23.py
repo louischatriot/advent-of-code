@@ -26,14 +26,16 @@ print(computer.get_value('a'))
 
 
 # PART 2
-computer = Assembunny(lines)
+faster_program = [line for line in lines]
+faster_program = faster_program[0:2] + ['fun'] + faster_program[16:]
+faster_program[4] = 'cpy -3 c'
+
+computer = Assembunny(faster_program)
 if not is_example:
     computer.memory['a'] = 12
 
 computer.run()
-print(computer.get_value('a'))
-
-
+print(computer.memory)
 
 
 

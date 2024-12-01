@@ -19,7 +19,7 @@ from assembunny import Assembunny
 
 for v in range(1000):
     out = list()
-    computer = Assembunny(lines, out)
+    computer = Assembunny(lines, out = out)
     computer.memory['a'] = v
     computer.run()
 
