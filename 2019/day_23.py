@@ -16,8 +16,6 @@ with open(fn) as file:
 
 # PART 1
 from intcode import Computer
-
-# PART 1
 program = [int(n) for n in lines[0].split(',')]
 
 N = 50
