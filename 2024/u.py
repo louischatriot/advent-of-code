@@ -61,6 +61,22 @@ def get_visible(arr, i, j, di, dj):
     return '.'
 
 
+# Assumes square matrix
+def diagonals(matrix):
+    N = len(matrix)
+    for dn in range(N):
+        yield [matrix[d][dn-d] for d in range(dn+1)]
+
+    for dn in range(N-1):
+        yield [matrix[N-1-dn+d][N-1-d] for d in range(dn+1)]
+
+    for dn in range(N):
+        yield [matrix[N-1-dn+d][d] for d in range(dn+1)]
+
+    for dn in range(N-1):
+        yield [matrix[d][N-1-dn+d] for d in range(dn+1)]
+
+
 # Assuming same size
 def compare_2d_arrays(a1, a2):
     for i in range(0, len(a1)):
