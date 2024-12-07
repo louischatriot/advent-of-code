@@ -77,6 +77,15 @@ def diagonals(matrix):
         yield [matrix[d][N-1-dn+d] for d in range(dn+1)]
 
 
+def transpose(matrix):
+    N, M = len(matrix), len(matrix[0])
+    res = [[None for _ in range(N)] for _ in range(M)]
+    for i, j in itertools.product(range(N), range(M)):
+        res[j][i] = matrix[i][j]
+
+    return res
+
+
 # Assuming same size
 def compare_2d_arrays(a1, a2):
     for i in range(0, len(a1)):
