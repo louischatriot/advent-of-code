@@ -157,6 +157,17 @@ def least_common(iterable):
     return k0, f[k0]
 
 
+__sizes = [10 ** n for n in range(20)]
+__lengths = [n for n in range(20)]
+
+def n_digits(n):
+    for s, l in zip(__sizes, __lengths):
+        if n < s:
+            return l
+
+    raise ValueError("Too large")
+
+
 # Tasks are strings
 REMOVED = '<removed-item>'
 class PriorityQueue:
@@ -291,7 +302,7 @@ def primes_until_n(n):
 
 def get_prime_factors(n, primes = None):
     if primes is None:
-        primes = primes_until_n(math.floor(math.sqrt(n)) + 1)
+        primes = primes_until_n(n // 2 + 1)
 
     res = []
 
@@ -318,6 +329,15 @@ def sum_of_divisors(n, primes = None):
             res.add(math.prod(subset))
 
     return sum(res)
+
+
+def number_of_divisors(n, primes = None):
+    pfs = get_prime_factors(n, primes)
+    pfs_freq = defaultdict(lambda: 0)
+    for pf in pfs:
+        pfs_freq[pf] += 1
+
+    return math.prod(n + 1 for n in pfs_freq.values())
 
 
 def pairwise(iterable):

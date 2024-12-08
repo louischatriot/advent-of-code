@@ -25,7 +25,7 @@ def calc(numbers, oplist):
         elif op == '*':
             res = res * n
         elif op == '||':
-            res = int(str(res) + str(n))  # Clean.
+            res = int(f"{res}{n}")  # Clean.
         else:
             raise ValueError("Unknown operator")
 
