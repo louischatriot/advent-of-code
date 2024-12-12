@@ -1,7 +1,7 @@
 import itertools
 import heapq
 import re
-from collections import defaultdict
+from collections import defaultdict, deque
 import math
 import numpy
 import hashlib
@@ -370,6 +370,40 @@ class DoubleLinkedList:
         self.prev.next = self.next
         self.next.prev = self.prev
 
+
+def get_matrix_regions(matrix):
+    N, M = len(matrix), len(matrix[0])
+    regions = list()
+    visited = set()
+
+    while len(visited) < N * M:
+        # Pick a non visited starting point ; not super super optimal
+        for i, j in itertools.product(range(N), range(M)):
+            if (i, j) not in visited:
+                i0, j0 = i, j
+                break
+
+        to_visit = deque()
+        to_visit.append((i0, j0))
+        region = set()
+        name = matrix[i0][j0]
+
+        while len(to_visit) > 0:
+            current = to_visit.popleft()
+            if current in visited:
+                continue
+
+            i, j = current
+            for ni, nj, v in ortho_neighbours_iterator(matrix, i, j):
+                if v == name:
+                    to_visit.append((ni, nj))
+
+            region.add(current)
+            visited.add(current)
+
+        regions.append((name, region))
+
+    return regions
 
 
 def bfs_matrix(matrix, i, j, wall='#', empty='.', stop_at_non_empty=True):
