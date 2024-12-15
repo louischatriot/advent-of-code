@@ -43,25 +43,6 @@ for i, l in enumerate(matrix):
         elif c == 'O':
             boxes.add((i, j))
 
-def print_matrix(N, M, walls, boxes, robot, expanded = False):
-    matrix = [['.' for _ in range(M)] for _ in range(N)]
-    for i, j in walls:
-        matrix[i][j] = '#'
-    for i, j in boxes:
-        if expanded:
-            matrix[i][j] = '['
-            matrix[i][j+1] = ']'
-        else:
-            matrix[i][j] = 'O'
-
-    matrix[robot[0]][robot[1]] = '@'
-
-    print('')
-    for l in matrix:
-        print(' '.join(l))
-    print('')
-
-
 for c in instructions:
     di, dj = u.directions[c]
     i, j = robot
@@ -94,7 +75,7 @@ print(res)
 
 
 # PART 2 - Set approach is a pain here, let's switch to matrix
-# Lots of ugly boilerplate below ...
+# Lots of ugly boilerplate to switch to new format below ...
 walls = set()
 boxes = set()
 robot = (None, None)
@@ -107,8 +88,6 @@ for i, l in enumerate(matrix):
             walls.add((i, j))
         elif c == 'O':
             boxes.add((i, j))
-
-print_matrix(N, M, walls, boxes, robot)
 
 M = M * 2
 new_walls = set()
@@ -133,15 +112,6 @@ for i, j in boxes:
 
 matrix[robot[0]][robot[1]] = '@'
 
-def new_print_matrix(matrix):
-    print('')
-    for l in matrix:
-        print(' '.join(l))
-    print('')
-
-
-new_print_matrix(matrix)
-
 for c in instructions:
     di, dj = u.directions[c]
     i, j = robot
@@ -155,6 +125,7 @@ for c in instructions:
     if matrix[i+di][j+dj] == '#':
         continue
 
+    # Moving stuff horizontally
     if di == 0:
         jt = j
         while True:
@@ -222,7 +193,6 @@ for c in instructions:
         matrix[robot[0]][robot[1]] = '.'
         matrix[robot[0]+di][robot[1]] = '@'
         robot = (robot[0]+di, robot[1])
-
 
 
 res = 0
