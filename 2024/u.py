@@ -450,7 +450,7 @@ class Graph:
         if node not in self.nodes:
             self.nodes.append(node)
 
-    def add_directed_node(self, a, b, distance):
+    def add_directed_edge(self, a, b, distance):
         self.add_node(a)
         self.add_node(b)
 
@@ -458,6 +458,14 @@ class Graph:
             raise ValueError("Trying to add the same edge twice")
 
         self.edges[a][b] = distance
+
+    # Assume we are trying to get the shorted path
+    def update_directed_edge(self, a, b, distance):
+        if b in self.edges[a]:
+            self.edges[a][b] = min(distance, self.edges[a][b])
+        else:
+            self.add_directed_edge(a, b, distance)
+
 
     # Get best paths between two nodes
     # If full is True we get all best path between two nodes
@@ -473,7 +481,7 @@ class Graph:
             for coords, distance in bfs_matrix(matrix, ia, ja, wall, empty, not full):
                 ib, jb = coords
                 b = matrix[ib][jb]
-                self.add_directed_node(a, b, distance)
+                self.add_directed_edge(a, b, distance)
 
     # Get all best paths between two nodes
     def create_full_from_matrix(self, matrix, wall='#', empty='.'):
@@ -483,7 +491,7 @@ class Graph:
     def print(self):
         print("=============================================================")
         print(f"NODES: {', '.join(self.nodes)}")
-        for n in self.nodes:
+        for n in sorted(self.nodes):
             print(f"-- {n} => {', '.join([m + ' (' + str(d) + ')' for m, d in self.edges[n].items()])}")
         print("=============================================================")
 
@@ -493,7 +501,7 @@ class Graph:
         for n in self.nodes:
             g.add_node(n)
             for m, d in self.edges[n].items():
-                g.add_directed_node(n, m, d)
+                g.add_directed_edge(n, m, d)
 
         return g
 
@@ -557,6 +565,38 @@ class Graph:
             res = min(res, sum([self.edges[a][b] for a, b in pairwise(path)]))
 
         return res
+
+    def dijkstra(self, start_node, end_node):
+        # Should take sum of all distances to be sure
+        upper_bound = 99999999999999
+        distances = PriorityQueue()
+        unvisited = set()
+        best_predecessors = dict()
+
+        for node in self.nodes:
+            if node == start_node:
+                distances.add_task(node, 0)
+            else:
+                distances.add_task(node, upper_bound)
+
+            unvisited.add(node)
+
+        while True:
+            current, current_dist = distances.pop_task()
+
+            if current == end_node:
+                return current_dist
+
+            for new_state, d in self.edges[current].items():
+
+                if new_state in unvisited:
+                    _, dist = distances.get_task(new_state)
+                    dist = min(dist, d + current_dist)
+                    distances.add_task(new_state, dist)
+
+                    best_predecessors[new_state] = current
+
+            unvisited.remove(current)
 
 
 
