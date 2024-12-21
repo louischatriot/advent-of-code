@@ -44,13 +44,6 @@ def nexts(moves, pos):
         yield dir, new_pos
 
 
-start = ('A', 'A', 'A')
-target = lines[0]
-visited = set()
-to_explore = collections.deque()
-to_explore.append((0, start))
-end = ('0', 'A', 'A')
-
 def gen_next_states(state):
     pos0, pos1, pos2 = state
 
@@ -69,26 +62,41 @@ def gen_next_states(state):
             yield (rn_moves[pos0][pos1], pos1, pos2)
 
 
-while to_explore:
-    distance, state = to_explore.popleft()
+def moves_between_digits(d_start, d_end):
+    start = (d_start, 'A', 'A')
+    end = (d_end, 'A', 'A')
 
-    if state in visited:
-        continue
-    visited.add(state)
+    visited = set()
+    to_explore = collections.deque()
+    to_explore.append((0, start))
 
-    if state == end:
-        print(distance)
-        1/0
+    while to_explore:
+        distance, state = to_explore.popleft()
 
-    for new_state in gen_next_states(state):
-        if new_state not in visited:
-            to_explore.append((distance+1, new_state))
+        if state in visited:
+            continue
+        visited.add(state)
+
+        if state == end:
+            return distance
+
+        for new_state in gen_next_states(state):
+            if new_state not in visited:
+                to_explore.append((distance+1, new_state))
 
 
+res = 0
+current = 'A'
+for code in lines:
+    moves = 0
 
+    for d1, d2 in u.pairwise(current + code):
+        moves += moves_between_digits(d1, d2) + 1
 
+    current = code[-1]
+    res += int(code[0:-1]) * moves
 
-
+print(res)
 
 
 
