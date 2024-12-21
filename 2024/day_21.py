@@ -39,26 +39,9 @@ rn_moves = {
 }
 
 # Yields dir, new_pos
-def next_rd(pos):
-    for dir, new_pos in rd_moves[pos].items():
+def nexts(moves, pos):
+    for dir, new_pos in moves[pos].items():
         yield dir, new_pos
-
-
-    # if pos == '^':
-        # yield '>', 'A'
-        # yield 'v', 'v'
-    # elif pos == 'A':
-        # yield '<', '^'
-        # yield 'v', '>'
-    # elif pos == '<':
-        # yield '>', 'v'
-    # elif pos == 'v':
-        # yield '<', '<'
-        # yield '>', '>'
-        # yield '^', '^'
-    # elif pos == '>':
-        # yield '^', 'A'
-        # yield '<', 'v'
 
 
 start = ('A', 'A', 'A')
@@ -66,6 +49,25 @@ target = lines[0]
 visited = set()
 to_explore = collections.deque()
 to_explore.append((0, start))
+end = ('0', 'A', 'A')
+
+def gen_next_states(state):
+    pos0, pos1, pos2 = state
+
+    # Moving robot 2
+    for dir, new_pos2 in nexts(rd_moves, pos2):
+        yield (pos0, pos1, new_pos2)
+
+    # Press 'A', moving robot 1
+    if pos2 != 'A':
+        if pos2 in rd_moves[pos1]:
+            yield (pos0, rd_moves[pos1][pos2], pos2)
+
+    # Press 'A', moving robot 0
+    if pos2 == 'A' and pos1 != 'A':
+        if pos1 in rn_moves[pos0]:
+            yield (rn_moves[pos0][pos1], pos1, pos2)
+
 
 while to_explore:
     distance, state = to_explore.popleft()
@@ -74,17 +76,21 @@ while to_explore:
         continue
     visited.add(state)
 
-    rn, rd1, rd2 = state
+    if state == end:
+        print(distance)
+        1/0
 
-    # Just moving the closest robot
-    for dir, new_pos in next_rd(rd2):
-        new_state = (rn, rd1, new_pos)
-
+    for new_state in gen_next_states(state):
         if new_state not in visited:
             to_explore.append((distance+1, new_state))
 
 
-    # ACTION!
+
+
+
+
+
+
 
 
 
