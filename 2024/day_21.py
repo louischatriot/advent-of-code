@@ -44,27 +44,31 @@ def nexts(moves, pos):
         yield dir, new_pos
 
 
-def gen_next_states(state):
-    pos0, pos1, pos2 = state
+def gen_next_states(state, depth):
+    # Moving last robot
+    for dir, new_pos in nexts(rd_moves, state[-1]):
+        yield (state[0], *state[1:-1], new_pos)
 
-    # Moving robot 2
-    for dir, new_pos2 in nexts(rd_moves, pos2):
-        yield (pos0, pos1, new_pos2)
+    # Pressing 'A'
+    iz = None
+    for i in range(depth, 0, -1):
+        if state[i] != 'A':
+            iz = i
+            break
 
-    # Press 'A', moving robot 1
-    if pos2 != 'A':
-        if pos2 in rd_moves[pos1]:
-            yield (pos0, rd_moves[pos1][pos2], pos2)
+    if iz is not None:
+        if iz > 1:
 
-    # Press 'A', moving robot 0
-    if pos2 == 'A' and pos1 != 'A':
-        if pos1 in rn_moves[pos0]:
-            yield (rn_moves[pos0][pos1], pos1, pos2)
+            if state[iz] in rd_moves[state[iz-1]]:
+                yield state[0:iz-1] + tuple([rd_moves[state[iz-1]][state[iz]]]) + state[iz:]
+        else:
+            if state[1] in rn_moves[state[0]]:
+                yield tuple([rn_moves[state[0]][state[1]]]) + state[1:]
 
 
-def moves_between_digits(d_start, d_end):
-    start = (d_start, 'A', 'A')
-    end = (d_end, 'A', 'A')
+def moves_between_digits(d_start, d_end, depth):
+    start = tuple([d_start] + ['A'] * depth)
+    end = tuple([d_end] + ['A'] * depth)
 
     visited = set()
     to_explore = collections.deque()
@@ -80,7 +84,7 @@ def moves_between_digits(d_start, d_end):
         if state == end:
             return distance
 
-        for new_state in gen_next_states(state):
+        for new_state in gen_next_states(state, depth):
             if new_state not in visited:
                 to_explore.append((distance+1, new_state))
 
@@ -91,12 +95,49 @@ for code in lines:
     moves = 0
 
     for d1, d2 in u.pairwise(current + code):
-        moves += moves_between_digits(d1, d2) + 1
+        moves += moves_between_digits(d1, d2, 2) + 1
 
     current = code[-1]
     res += int(code[0:-1]) * moves
 
 print(res)
+
+
+# PART 2
+# BFS will not cut it this time
+
+matrix = [['7', '8', '9'], ['4', '5', '6'], ['1', '2', '3'], [None, '0', 'A']]
+
+def moves_between_digits(d_start, d_end):
+    for x, y in itertools.product(range(3), range(4)):
+        if matrix[y][x] == d_start:
+            xs, ys = x, y
+        if matrix[y][x] == d_end:
+            xe, ye = x, y
+
+    if ys == ye:
+        d = '<' * (xs - xe) if xs > xe else '>' * (xe - xs)
+    elif ys > ye:
+        d = '^' * (ys - ye)
+        d += '<' * (xs - xe) if xs > xe else '>' * (xe - xs)
+    else:
+        if xs < xe:
+            d = '>' * (xe - xs) + 'v' * (ye - ys)
+        else:
+            d = 'v' * (ye - ys) + '<' * (xs - xe)
+
+
+
+
+
+    print(d)
+
+
+
+
+moves_between_digits('6', '0')
+
+
 
 
 
