@@ -47,7 +47,7 @@ def nexts(moves, pos):
 def gen_next_states(state, depth):
     # Moving last robot
     for dir, new_pos in nexts(rd_moves, state[-1]):
-        yield (state[0], *state[1:-1], new_pos)
+        yield dir, (state[0], *state[1:-1], new_pos)
 
     # Pressing 'A'
     iz = None
@@ -58,35 +58,36 @@ def gen_next_states(state, depth):
 
     if iz is not None:
         if iz > 1:
-
             if state[iz] in rd_moves[state[iz-1]]:
-                yield state[0:iz-1] + tuple([rd_moves[state[iz-1]][state[iz]]]) + state[iz:]
+                yield 'A', state[0:iz-1] + tuple([rd_moves[state[iz-1]][state[iz]]]) + state[iz:]
         else:
             if state[1] in rn_moves[state[0]]:
-                yield tuple([rn_moves[state[0]][state[1]]]) + state[1:]
+                yield 'A', tuple([rn_moves[state[0]][state[1]]]) + state[1:]
 
 
 def moves_between_digits(d_start, d_end, depth):
     start = tuple([d_start] + ['A'] * depth)
     end = tuple([d_end] + ['A'] * depth)
 
+    state = (0, '', start)
+
     visited = set()
     to_explore = collections.deque()
-    to_explore.append((0, start))
+    to_explore.append(state)
 
     while to_explore:
-        distance, state = to_explore.popleft()
+        distance, path, state = to_explore.popleft()
 
         if state in visited:
             continue
         visited.add(state)
 
         if state == end:
-            return distance
+            return path, distance
 
-        for new_state in gen_next_states(state, depth):
+        for dir, new_state in gen_next_states(state, depth):
             if new_state not in visited:
-                to_explore.append((distance+1, new_state))
+                to_explore.append((distance+1, path + dir, new_state))
 
 
 res = 0
@@ -94,8 +95,11 @@ current = 'A'
 for code in lines:
     moves = 0
 
+    path = ''
     for d1, d2 in u.pairwise(current + code):
-        moves += moves_between_digits(d1, d2, 2) + 1
+        __path, distance = moves_between_digits(d1, d2, 3)
+        moves += distance + 1
+        path += __path
 
     current = code[-1]
     res += int(code[0:-1]) * moves
@@ -106,40 +110,94 @@ print(res)
 # PART 2
 # BFS will not cut it this time
 
+moves = {
+    'A': { '^': '<', 'v': '<v', '<': 'v<<', '>': 'v' },
+    '^': { 'A': '>', 'v': 'v', '<': 'v<', '>': '>v' },
+    'v': { 'A': '>^', '^': '^', '<': '<', '>': '>' },
+    '<': { 'v': '>', '>': '>>', '^': '>^', 'A': '>>^' },
+    '>': { 'A': '^', 'v': '<', '<': '<<', '^': '<^' }
+}
+
+moves['A']['<'] = ['v<<', '<v<']
+moves['^']['>'] = ['>v', 'v>']
+moves['v']['A'] = ['>^', '^>']
+moves['<']['A'] = ['>>^', '>^>']
+moves['>']['^'] = ['^<', '<^']
+
+import functools
+
+@functools.cache
+def receive(seq, depth):
+
+    if depth == 0:
+        return len(seq)
+
+    if seq == 'A':
+        return 1
+
+    current = 'A'
+    res = 0
+
+    for c in seq:
+        if current == c:
+            res += 1
+        else:
+            __moves = moves[current][c]
+            if type(__moves) == str:
+                __moves = [__moves]
+
+            res += min(receive(move + 'A', depth - 1) for move in __moves)
+            current = c
+
+    return res
+
+
+
 matrix = [['7', '8', '9'], ['4', '5', '6'], ['1', '2', '3'], [None, '0', 'A']]
 
-def moves_between_digits(d_start, d_end):
+def get_num_paths(xs, ys, xe, ye, path):
+    if (xs, ys) == (xe, ye):
+        yield path
+        return
+
+    dx = -1 if xe < xs else (1 if xe > xs else 0)
+    dy = -1 if ye < ys else (1 if ye > ys else 0)
+
+    if (xs + dx, ys) != (0, 3) and dx != 0:
+        for p in get_num_paths(xs + dx, ys, xe, ye, path + ('<' if dx < 0 else '>')):
+            yield p
+
+    if (xs, ys + dy) != (0, 3) and dy != 0:
+        for p in get_num_paths(xs, ys + dy, xe, ye, path + ('^' if dy < 0 else 'v')):
+            yield p
+
+
+def get_paths_between_digits(d_start, d_end):
     for x, y in itertools.product(range(3), range(4)):
         if matrix[y][x] == d_start:
             xs, ys = x, y
         if matrix[y][x] == d_end:
             xe, ye = x, y
 
-    if ys == ye:
-        d = '<' * (xs - xe) if xs > xe else '>' * (xe - xs)
-    elif ys > ye:
-        d = '^' * (ys - ye)
-        d += '<' * (xs - xe) if xs > xe else '>' * (xe - xs)
-    else:
-        if xs < xe:
-            d = '>' * (xe - xs) + 'v' * (ye - ys)
-        else:
-            d = 'v' * (ye - ys) + '<' * (xs - xe)
+    for path in get_num_paths(xs, ys, xe, ye, ''):
+        yield path + 'A'
 
 
+def get_score(code):
+    res = 99999999999999999999999999999999  # Fuck it
 
+    for a, b, c, d in itertools.product(*[get_paths_between_digits(i, j) for i, j in u.pairwise('A' + code)]):
+        path = a + b + c + d
+        res = min(res, receive(path, 25))
 
+    return res
 
-    print(d)
+res = 0
+current = 'A'
+for code in lines:
+    res += int(code[0:-1]) * get_score(code)
 
-
-
-
-moves_between_digits('6', '0')
-
-
-
-
+print(res)
 
 
 
