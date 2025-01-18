@@ -14,7 +14,7 @@ with open(fn) as file:
     lines = [line.rstrip() for line in file]
 
 
-# PART 1
+# PART 1 & 2
 # On 3 vectors instead of just 2
 
 deltas = {
