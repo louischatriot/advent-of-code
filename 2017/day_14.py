@@ -15,12 +15,7 @@ with open(fn) as file:
 
 
 # PART 1
-lengths = [int(n) for n in lines[0].split(',')]
 N = 256
-if is_example:
-    N = 5
-
-l = [n for n in range(N)]
 
 def mix(l, lengths, base_current, base_skip):
     current = base_current
@@ -32,13 +27,6 @@ def mix(l, lengths, base_current, base_skip):
 
     return l, current, (base_skip + skip + 1)
 
-
-l, current, skip = mix(l, lengths, 0, 0)
-res = l[0] * l[1]
-print(res)
-
-
-# PART 2
 def get_hash(s):
     lengths = [ord(c) for c in s] + [17, 31, 73, 47, 23]
 
@@ -64,8 +52,66 @@ def get_hash(s):
 
     return hash
 
+def to_bin(h):
+    b = bin(int(f"0x{h}", 16))
+    b = b[2:]
+    while len(b) < 4:
+        b = '0' + b
 
-s = lines[0]
-hash = get_hash(s)
-print(hash)
+    return b
+
+
+kw = lines[0]
+
+nodes = set()
+res = 0
+for i in range(128):
+    s = kw + f"-{i}"
+    hash = get_hash(s)
+    hash = ''.join([to_bin(c) for c in hash])
+
+    for j, c in enumerate(hash):
+        if c == '1':
+            res += 1
+            nodes.add((i, j))
+
+print(res)
+
+
+# PART 2
+def get_group(start):
+    explored = set()
+    to_explore = deque()
+    to_explore.append(start)
+
+    while to_explore:
+        node = to_explore.popleft()
+        if node in explored:
+            continue
+        else:
+            explored.add(node)
+
+        i, j = node
+        for di, dj in u.ortho_neighbours:
+            ni, nj = i+di, j+dj
+            if (ni, nj) in nodes:
+                to_explore.append((ni, nj))
+
+    return explored
+
+
+res = 0
+explored = set()
+for node in nodes:
+    if node in explored:
+        continue
+
+    res += 1
+    group = get_group(node)
+    explored = explored.union(group)
+
+print(res)
+
+
+
 
