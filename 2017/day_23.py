@@ -15,71 +15,6 @@ with open(fn) as file:
 
 
 # PART 1
-# Inefficient implementation but less error prone
-class Duet:
-    def __init__(self, program):
-        self.program = [inst for inst in program]
-        self.inst_pointer = 0
-        self.memory = defaultdict(lambda: 0)
-        self.played_sounds = list()
-        self.recovered_frequencies = list()
-
-    def get_value(self, x):
-        try:
-            return int(x)
-        except ValueError:
-            return self.memory[x]
-
-    def run(self):
-        while True:
-            inst = self.program[self.inst_pointer]
-            inst, ops = inst[0:3], inst[4:]
-
-            try:
-                x, y = ops.split()
-                xv, yv = self.get_value(x), self.get_value(y)
-            except ValueError:
-                x = ops
-                xv = self.get_value(x)
-
-            if inst == 'jgz':
-                if xv > 0:
-                    self.inst_pointer += yv
-                else:
-                    self.inst_pointer += 1
-                continue
-
-            if inst == 'snd':
-                self.played_sounds.append(xv)
-
-            elif inst == 'set':
-                self.memory[x] = yv
-
-            elif inst == 'add':
-                self.memory[x] += yv
-
-            elif inst == 'mul':
-                self.memory[x] *= yv
-
-            elif inst == 'mod':
-                self.memory[x] %= yv
-
-            elif inst == 'rcv':
-                self.recovered_frequencies.append(self.played_sounds[-1])
-                print(self.played_sounds[-1])
-                break
-
-            else:
-                raise ValueError("Unknown instruction")
-
-            self.inst_pointer += 1
-
-
-duet = Duet(lines)
-duet.run()
-
-
-# PART 2
 class Duet:
     def __init__(self, program):
         self.program = [inst for inst in program]
@@ -88,6 +23,7 @@ class Duet:
         self.receiver = None
         self.receive_queue = deque()
         self.snd_called = 0
+        self.mul_called = 0
         self.WAITING = False
 
     def get_value(self, x):
@@ -105,6 +41,9 @@ class Duet:
     def run_until_waiting(self):
         self.WAITING = False
         while True:
+            if self.inst_pointer >= len(self.program):
+                break
+
             inst = self.program[self.inst_pointer]
             inst, ops = inst[0:3], inst[4:]
 
@@ -122,6 +61,13 @@ class Duet:
                     self.inst_pointer += 1
                 continue
 
+            if inst == 'jnz':
+                if xv != 0:
+                    self.inst_pointer += yv
+                else:
+                    self.inst_pointer += 1
+                continue
+
             if inst == 'snd':
                 self.receiver.receive(xv)
                 self.snd_called += 1
@@ -132,8 +78,12 @@ class Duet:
             elif inst == 'add':
                 self.memory[x] += yv
 
+            elif inst == 'sub':
+                self.memory[x] -= yv
+
             elif inst == 'mul':
                 self.memory[x] *= yv
+                self.mul_called += 1
 
             elif inst == 'mod':
                 self.memory[x] %= yv
@@ -151,20 +101,27 @@ class Duet:
             self.inst_pointer += 1
 
 
-d0, d1 = Duet(lines), Duet(lines)
-d0.memory['p'] = 0
-d1.memory['p'] = 1
-d0.set_receiver(d1)
-d1.set_receiver(d0)
-
-while not d0.WAITING or d0.receive_queue or not d1.WAITING or d1.receive_queue:
-    d0.run_until_waiting()
-    d1.run_until_waiting()
+duet = Duet(lines)
+duet.run_until_waiting()
+print(duet.mul_called)
 
 
-print(d1.snd_called)
+# PART 2
+# The code basically tries to divide every number between A and B, spaced by delta C, by every number
+# h is increased whenever one of these divisions is integer i.e. the number has a divisor, i.e. it is not prime
+primes = u.primes_until_n(1000000)
+primes = { p: True for p in primes }
 
+res = 0
+A = 108400
+B = 125400
+D = 17
 
+for n in range(A, B+1, D):
+    if n not in primes:
+        res += 1
+
+print(res)
 
 
 

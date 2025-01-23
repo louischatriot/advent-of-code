@@ -25,6 +25,9 @@ ortho_neighbours = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 all_neighbours = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 all_neighbours_and_center = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 0), (0, 1), (1, -1), (1, 0), (1, 1)]
 
+left = { (1, 0): (0, 1), (0, 1): (-1, 0), (-1, 0): (0, -1), (0, -1): (1, 0) }
+right = { v: k for k, v in left.items() }
+
 def ortho_neighbours_iterator(data, i, j):
     I, J = len(data), len(data[0])
 
