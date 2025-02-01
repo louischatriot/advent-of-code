@@ -14,7 +14,7 @@ with open(fn) as file:
     lines = [line.rstrip() for line in file]
 
 
-# PART 1 & 2
+# PART 1
 particles_start = list()
 for line in lines:
     data = line.split('<')
