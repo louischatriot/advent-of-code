@@ -31,6 +31,7 @@ for x, y in itertools.product(range(1, N+1), repeat = 2):
     cells[(x, y)] = p
 
 
+# Partial sums would be much faster
 best = -float('inf')
 for x0, y0 in itertools.product(range(1, N-1), repeat = 2):
     candidate = sum(cells[(x0+x, y0+y)] for x, y in itertools.product(range(0, 3), repeat=2))
