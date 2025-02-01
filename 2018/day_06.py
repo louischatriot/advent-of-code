@@ -31,7 +31,7 @@ for line in lines:
     yM = max(yM, y)
 
 N = (xM - xm + 1) * (yM - ym + 1)
-N *= 12  # After having filled entirely the inner rectangle and part of the outside, the non infinite will have stopped
+N *= 2  # After having filled entirely the inner rectangle and part of the outside, the non infinite will have stopped
 
 frontiers = defaultdict(lambda: list())
 areas = defaultdict(lambda: 1)
@@ -57,7 +57,6 @@ for node in nodes:
 
 while True:
     former_areas = {k: v for k, v in areas.items()}
-
 
     to_mark = defaultdict(lambda: defaultdict(lambda: 0))
     new_frontiers = defaultdict(lambda: list())
@@ -91,6 +90,36 @@ for node in areas:
         res = max(res, areas[node])
 
 print(res)
+
+
+# PART 2
+# Actually no need to go beyond the inner rectangle, that's a bit of a joke
+CUTOFF = 32 if is_example else 10000
+
+def score(point):
+    x, y = point
+
+    res = 0
+    for node in nodes:
+        nx, ny = node
+        res += abs(nx - x) + abs(ny - y)
+
+    return res
+
+
+res = 0
+for x in range(xm, xM+1):
+    for y in range(ym, yM + 1):
+        if score((x, y)) < CUTOFF:
+            res += 1
+
+
+print(res)
+
+
+
+
+
 
 
 

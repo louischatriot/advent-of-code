@@ -372,6 +372,13 @@ class DoubleLinkedList:
         self.prev = dll
         dll.next = self
 
+    def insert_value_after(self, v):
+        dll = DoubleLinkedList(v)
+        dll.prev = self
+        dll.next = self.next
+        self.next.prev = dll
+        self.next = dll
+
     def remove(self):
         self.prev.next = self.next
         self.next.prev = self.prev
