@@ -57,6 +57,7 @@ print(res)
 
 
 # PART 2
+# Actually using a string is much faster than a double linked list ...
 s = '37'
 e1 = 0
 e2 = 1
@@ -64,14 +65,7 @@ target = '589167' if is_example else '825401'
 
 while True:
     v = int(s[e1]) + int(s[e2])
-    to_insert = list()
-    if v < 10:
-        to_insert.append(v)
-    else:
-        a, b = v // 10, v % 10
-        to_insert.append(a)
-        to_insert.append(b)
-
+    to_insert = [v] if v < 10 else [v // 10, v % 10]
     for v in to_insert:
         s += str(v)
 
