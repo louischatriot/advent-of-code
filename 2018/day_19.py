@@ -1,7 +1,7 @@
 import sys
 import re
 import u as u
-from collections import defaultdict
+from collections import defaultdict, deque
 import math
 import itertools
 import os
@@ -114,62 +114,51 @@ def eqrr(mem, a, b, c):
 instructions['eqrr'] = eqrr
 
 
-idx = 0
-res = 0
-pos = defaultdict(lambda: list())
-while idx < len(lines) and lines[idx][0:6] == 'Before':
-    memb = [int(v) for v in lines[idx].split(': ')[1][1:-1].split(', ')]
-    mema = [int(v) for v in lines[idx+2].split(':  ')[1][1:-1].split(', ')]
-    op, a, b, c = lines[idx+1].split()
-    op, a, b, c = int(op), int(a), int(b), int(c)
+opcodes = {12: 'eqir', 14: 'gtrr', 4: 'gtri', 7: 'eqri', 9: 'eqrr', 15: 'gtir', 0: 'bani', 5: 'banr', 8: 'seti', 1: 'addr', 2: 'mulr', 11: 'setr', 13: 'muli', 3: 'addi', 10: 'bori', 6: 'borr'}
 
-    candidates = {k for k in instructions if instructions[k](memb, a, b, c) == mema}
-    if len(candidates) >= 3:
-        res += 1
+class Computer:
+    def __init__(self, ip_reg, program):
+        self.ip = 0
+        self.ip_reg = ip_reg
+        self.program = [(opcode, a, b, c) for opcode, a, b, c in program]
+        self.mem = [0 for _ in range(6)]
 
-    pos[op].append(candidates)
+    def run(self):
+        while True:
+            if self.ip >= len(self.program):
+                break
 
-    idx += 4
+            opcode, a, b, c = self.program[self.ip]
+            self.mem[self.ip_reg] = self.ip
+            self.mem = instructions[opcode](self.mem, a, b, c)
+            self.ip = self.mem[self.ip_reg]
+            self.ip += 1
 
-print(res)
+
+ip_reg = int(lines[0][-1])
+
+program = list()
+for line in lines[1:]:
+    opcode, a, b, c = line.split()
+    a, b, c = int(a), int(b), int(c)
+    program.append((opcode, a, b, c))
+
+computer = Computer(ip_reg, program)
+computer.run()
+print(computer.mem[0])
 
 
 # PART 2
-for op in pos:
-    p, pps = pos[op][0], pos[op][1:]
-    for pp in pps:
-        p = p.intersection(pp)
-    pos[op] = p
+# Looking reaaaaaally hard at the code, you see that it's actually adding to zero all numbers that divide
+# register 5 (after it is initialized) evenly. The N below is the one initialized after the first time the
+# code jumped to inst 17 then back. To understand how it works look in particular at lines 3 to 11, a very
+# inefficient way to determine whether register 1 divides register 5 and if yes add the quotient
+N = 10551345
+res = 0
+for d in range(1, N+1):
+    if N % d == 0:
+        res += d
 
-opcodes = dict()
-while len(opcodes) < 16:
-    for op in pos:
-        if len(pos[op]) == 1:
-            break
-
-    instr = pos[op].pop()
-    opcodes[op] = instr
-
-    for op in pos:
-        if instr in pos[op]:
-            pos[op].remove(instr)
-
-
-print(opcodes)
-
-idx += 2
-mem = [0, 0, 0, 0]
-for line in lines[idx:]:
-    op, a, b, c = line.split()
-    op, a, b, c = int(op), int(a), int(b), int(c)
-    mem = instructions[opcodes[op]](mem, a, b, c)
-
-
-print(mem)
-
-
-
-
-
+print(res)
 
 

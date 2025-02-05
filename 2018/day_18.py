@@ -69,6 +69,9 @@ TARGET = 1000000000
 a = TARGET - start
 a = a % cycle
 R = a + start
+
+
+R=100
 for r in range(R):
     # Used to find cycle start and size
     # key = '==='.join([';'.join(l) for l in matrix])
@@ -108,6 +111,11 @@ for r in range(R):
             raise ValueError("Unknown acre")
 
     matrix = nm
+
+    print("=========================================")
+    for l in matrix:
+        print(''.join(l))
+
 
 
 res = sum(1 if matrix[i][j] == '|' else 0 for i, j in itertools.product(range(N), range(M)))
