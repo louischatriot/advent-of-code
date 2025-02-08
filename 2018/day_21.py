@@ -113,17 +113,18 @@ def eqrr(mem, a, b, c):
     return res
 instructions['eqrr'] = eqrr
 
+# Used only in test mode, could actually find the answer with this code
 def fun1(mem, a, b, c):
     res = [v for v in mem]
 
     res[5] = 1
     res[1] = res[2] // 256
 
-    # print("Function 1")
-
 
     return res
 instructions['fun1'] = fun1
+
+
 
 
 
@@ -137,44 +138,15 @@ class Computer:
         self.mem = [0 for _ in range(6)]
 
     def run(self):
-        cnt = 0
-
-        best = float('inf')
-
         while True:
             if self.ip >= len(self.program):
                 break
 
-
             opcode, a, b, c = self.program[self.ip]
-
-
-
             self.mem[self.ip_reg] = self.ip
-
-
-            if self.ip == 16:
-                # print(self.ip, '---', opcode, a, b, c, '---', self.mem)
-                # break
-
-                v = self.mem[3]
-
-
-                if v < best:
-                    print(v)
-                    best = v
-
-
-
-
             self.mem = instructions[opcode](self.mem, a, b, c)
             self.ip = self.mem[self.ip_reg]
             self.ip += 1
-
-
-            cnt += 1
-            # if cnt >= 2000:
-                # break
 
 
 ip_reg = int(lines[0][-1])
@@ -186,28 +158,50 @@ for line in lines[1:]:
     program.append((opcode, a, b, c))
 
 
-def get_probe():
-    res = 0
-    def probe(mem):
-        res = max(res, mem[3])
-        print(res)
-
-    return probe
-
 computer = Computer(ip_reg, program)
-
 # computer.mem[0] = 16311888
-# computer.mem[0] = 5953
-# computer.mem[0] = 3135
-# computer.mem[0] = 149
-
-computer.run()
-
-
 # Line 28 is the only one where register 0 is used
 # So register 3 is the value we are looking for, we just need to run the program
 # until it reaches line 0
 
+computer.run()
+
+
+# PART 2
+# Run this until no new lines are added, the last is the answer
+A = 10736359
+B = 16777215
+C = 65536
+D = 65899
+
+one = 0
+two = 0
+three = 0
+
+seen = defaultdict(lambda: 0)
+
+while True:
+    two = three | C
+    three = A
+
+    # Inner loop
+    while True:
+        one = two & 255
+        three = three + one
+        three = three & B
+        three = three * D
+        three = three & B
+
+        if two < 256:
+            break
+
+        if two >= 256:
+            two = two // 256
+            one = two
+
+    if three not in seen:
+        print(three)
+        seen[three] += 1
 
 
 
