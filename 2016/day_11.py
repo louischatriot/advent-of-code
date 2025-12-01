@@ -67,26 +67,55 @@ def clone_node(node):
     return res
 
 def h(node):
+    # return 0
+    res = 0
+    for f in range(1, 4):
+        res += len(node[f]) * (4 - f)
+
+    # res -= 10 * len(node[4])
+
+    return res
+
+    # print(node)
     return sum((4 - f) * len(node[f]) for f in range(1, 5))
 
 
 # Below is a really ugly A star, I really need to fix my string based implementation of PQ
 # Using better data types would probably make it much faster
+
+
+import heapq
+
+class PriorityEntry(object):
+
+    def __init__(self, priority, data):
+        self.data = data
+        self.priority = priority
+
+    def __lt__(self, other):
+        return self.priority < other.priority
+
+
+
 end_name = to_node_name(end_state)
 targets = [None, [2], [1, 3], [2, 4], [3]]
 
-s = time.time()
-print("===================================")
-
-
 visited = dict()
-to_visit = u.PriorityQueue()
-to_visit.add_task(f"{to_node_name(start_state)}|||||0", 0)
+to_visit = []
+heapq.heappush(to_visit, PriorityEntry(0, (0, start_state)))
+
+
+
+print("=================")
+
+print(end_state)
+print(len(end_state[4]))
 
 while True:
-    task, priority = to_visit.pop_task()
-    node_name, length = task.split('|||||')
-    length = int(length)
+    entry = heapq.heappop(to_visit)
+    length, node = entry.data
+
+    node_name = to_node_name(node)
 
     if node_name in visited:
         continue
@@ -94,27 +123,23 @@ while True:
 
     if node_name == end_name:
         print(length)
-        print(time.time() - s)
         break
 
-    floor, floors = node_name.split('>>>>>')
-    floor = int(floor)
-    floors = floors.split('==')[0:4]
-    floors = [None] + [set(f.split('-')) if len(f) > 0 else set() for f in floors]
+    floor = node['E']
 
     for target_floor in targets[floor]:
-        for comb in itertools.chain(itertools.combinations(floors[floor], 2), itertools.combinations(floors[floor], 1)):
+        for comb in itertools.chain(itertools.combinations(node[floor], 2), itertools.combinations(node[floor], 1)):
             new_node = dict()
             new_node['E'] = target_floor
 
             for f in range(1, 5):
-                new_node[f] = {o for o in floors[f]}
+                new_node[f] = {o for o in node[f]}
 
             new_node[floor] = new_node[floor] - set(comb)
             new_node[target_floor] = new_node[target_floor].union(set(comb))
 
             if is_valid(new_node):
-                to_visit.add_task(f"{to_node_name(new_node)}|||||{length + 1}", length + 1 + h(new_node))
+                heapq.heappush(to_visit, PriorityEntry(length + 1 + h(new_node), (length + 1, new_node)))
 
 
 
