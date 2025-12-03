@@ -16,30 +16,17 @@ with open(fn) as file:
 
 # PART 1
 res = 0
-pointer = 50
-for line in lines:
-    d = -1 if line[0] == 'L' else 1
-    n = int(line[1:])
-    n *= d
 
-    pointer = (pointer + n) % 100
-    if pointer == 0:
-        res += 1
+for line in lines:
+    jolts = [int(c) for c in line]
+    joltage = max(jolts[0:-1])
+    joltage = 10 * joltage + max(jolts[jolts.index(joltage)+1:])
+    res += joltage
 
 print(res)
 
 
 # PART 2
-res = 0
-pointer = 50
-for line in lines:
-    d = -1 if line[0] == 'L' else 1
-    n = int(line[1:])
 
-    for _ in range(n):
-        pointer = (d + pointer) % 100
-        if pointer == 0:
-            res += 1
 
-print(res)
 
