@@ -27,6 +27,28 @@ print(res)
 
 
 # PART 2
+res = 0
+N = 12
+
+for line in lines:
+    jolts = [int(c) for c in line]
+    joltage = []
+    current = 0
+
+    for pos in range(N):
+        if pos < N-1:
+            search_range = jolts[0:-(N-pos-1)]
+        else:
+            search_range = jolts[0:]
+
+        best = max(search_range)
+        joltage.append(best)
+        jolts = jolts[jolts.index(best)+1:]
+
+    joltage = int(''.join([str(d) for d in joltage]))
+    res += joltage
+
+print(res)
 
 
 
