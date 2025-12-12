@@ -169,6 +169,11 @@ def n_digits(n):
     raise ValueError("Too large")
 
 
+def sumproduct(*vecs):
+    from math import prod
+    return sum(map(prod, zip(*vecs)))
+
+
 # Tasks are strings
 REMOVED = '<removed-item>'
 class PriorityQueue:
